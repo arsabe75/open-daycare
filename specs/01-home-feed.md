@@ -1,6 +1,6 @@
 # SPEC 01 — Home con plantilla de feed
 
-> **Estado:** Borrador
+> **Estado:** Aprobado
 > **Depende de:** —
 > **Fecha:** 2026-09-03
 > **Objetivo:** Implementar la plantilla `references/pantallas/feed.dc.html` como home (`/`) con estilo visual idéntico, usando datos mock y sin autenticación ni base de datos.
