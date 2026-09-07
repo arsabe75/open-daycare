@@ -11,8 +11,8 @@ export default function KidsPage() {
     <div className="flex min-h-screen bg-[#F6ECDF]">
       <Sidebar activeHref="/kids" />
       <main className="flex-1 min-w-0 h-screen overflow-y-auto">
-        <div className="max-w-[880px] w-full mx-auto px-10 pt-[34px] pb-20">
-          <div className="flex items-end justify-between gap-4 mb-[22px]">
+        <div className="max-w-220 w-full mx-auto px-10 pt-8.5 pb-20">
+          <div className="flex items-end justify-between gap-4 mb-5.5">
             <div>
               <div className="text-[12.5px] font-extrabold tracking-[0.8px] text-[#D9583C] mb-1">
                 GESTIÓN
@@ -23,7 +23,7 @@ export default function KidsPage() {
             </div>
             <Link
               href="/kids/new"
-              className="flex items-center gap-2 px-[18px] py-[11px] rounded-[14px] bg-gradient-to-b from-[#F4977E] to-[#EE8164] text-white font-extrabold text-[14.5px] shadow-[0_8px_18px_-8px_rgba(238,129,100,0.7)]"
+              className="flex items-center gap-2 px-4.5 py-2.75 rounded-[14px] bg-linear-to-b from-[#F4977E] to-[#EE8164] text-white font-extrabold text-[14.5px] shadow-[0_8px_18px_-8px_rgba(238,129,100,0.7)]"
             >
               <svg
                 width="17"
@@ -41,7 +41,7 @@ export default function KidsPage() {
             </Link>
           </div>
 
-          <div className="mb-[22px]">
+          <div className="mb-5.5">
             <SearchBox />
           </div>
 

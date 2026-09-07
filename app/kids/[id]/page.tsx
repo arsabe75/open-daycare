@@ -21,10 +21,10 @@ export default async function KidProfilePage({
     <div className="flex min-h-screen bg-[#F6ECDF]">
       <Sidebar activeHref="/kids" />
       <main className="flex-1 min-w-0 h-screen overflow-y-auto">
-        <div className="max-w-[820px] w-full mx-auto px-10 pt-[34px] pb-20">
+        <div className="max-w-205 w-full mx-auto px-10 pt-8.5 pb-20">
           <Link
             href="/kids"
-            className="flex items-center gap-[7px] text-[#94887B] font-bold text-[14px] mb-5"
+            className="flex items-center gap-1.75 text-[#94887B] font-bold text-[14px] mb-5"
           >
             <svg
               width="18"
@@ -41,9 +41,9 @@ export default async function KidProfilePage({
             Volver a Niños
           </Link>
 
-          <div className="flex gap-[26px] items-start flex-wrap">
-            <div className="flex-1 min-w-[300px] flex flex-col gap-[18px]">
-              <div className="flex items-center gap-[18px]">
+          <div className="flex gap-6.5 items-start flex-wrap">
+            <div className="flex-1 min-w-75 flex flex-col gap-4.5">
+              <div className="flex items-center gap-4.5">
                 <ChildAvatar avatar={child.avatar} size="profile" />
                 <div className="flex-1">
                   <h1 className="font-display font-semibold text-[28px] text-[#3F362E] m-0">
@@ -66,10 +66,10 @@ export default async function KidProfilePage({
               <ChildDetails child={child} />
             </div>
 
-            <div className="w-[300px] flex-none flex flex-col gap-3.5">
+            <div className="w-75 flex-none flex flex-col gap-3.5">
               <Link
                 href="/daily-summary"
-                className="flex items-center justify-center gap-[9px] w-full py-[13px] rounded-[14px] bg-[#3F362E] text-white font-extrabold text-[15px]"
+                className="flex items-center justify-center gap-2.25 w-full py-3.25 rounded-[14px] bg-[#3F362E] text-white font-extrabold text-[15px]"
               >
                 <svg
                   width="18"

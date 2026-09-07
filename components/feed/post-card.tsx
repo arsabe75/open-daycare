@@ -24,7 +24,7 @@ export default function PostCard({ post }: PostCardProps) {
   const initial = post.childName ? post.childName.charAt(0).toUpperCase() : null;
 
   return (
-    <article className="bg-[#FFFDF9] border border-[#ECE0D0] rounded-[20px] p-5 px-[22px] shadow-[0_4px_16px_-12px_rgba(120,90,60,0.5)]">
+    <article className="bg-[#FFFDF9] border border-[#ECE0D0] rounded-[20px] p-5 px-5.5 shadow-[0_4px_16px_-12px_rgba(120,90,60,0.5)]">
       <div className="flex items-center gap-3 mb-3.5">
         {isAnnouncement ? (
           <div className="w-11 h-11 rounded-full bg-[#CCD8F4] text-[#4E72C8] flex items-center justify-center flex-none">
@@ -55,7 +55,7 @@ export default function PostCard({ post }: PostCardProps) {
           </div>
         </div>
         <div
-          className="flex items-center gap-[7px] px-3 py-1.5 rounded-full"
+          className="flex items-center gap-1.75 px-3 py-1.5 rounded-full"
           style={{ backgroundColor: config.bg }}
         >
           <span
@@ -82,7 +82,7 @@ export default function PostCard({ post }: PostCardProps) {
       {post.photoLabel && (
         <Link
           href="/foto"
-          className="flex flex-col items-center justify-center gap-2 mt-3.5 border-[1.5px] border-dashed border-[#DBCDBA] rounded-2xl bg-[#F4ECE1] h-[200px] text-[#B0A290]"
+          className="flex flex-col items-center justify-center gap-2 mt-3.5 border-[1.5px] border-dashed border-[#DBCDBA] rounded-2xl bg-[#F4ECE1] h-50 text-[#B0A290]"
         >
           <svg
             width="30"
@@ -102,8 +102,8 @@ export default function PostCard({ post }: PostCardProps) {
         </Link>
       )}
 
-      <div className="flex items-center gap-[18px] mt-4 pt-3.5 border-t border-[#F0E6D8]">
-        <span className="flex items-center gap-[7px] text-[#E0654A] font-bold text-sm">
+      <div className="flex items-center gap-4.5 mt-4 pt-3.5 border-t border-[#F0E6D8]">
+        <span className="flex items-center gap-1.75 text-[#E0654A] font-bold text-sm">
           <svg
             width="19"
             height="19"
@@ -120,7 +120,7 @@ export default function PostCard({ post }: PostCardProps) {
         </span>
         <Link
           href="/detalle-publicacion"
-          className="flex items-center gap-[7px] text-[#94887B] font-bold text-sm"
+          className="flex items-center gap-1.75 text-[#94887B] font-bold text-sm"
         >
           <svg
             width="18"

@@ -4,7 +4,7 @@ export default function Composer() {
   return (
     <Link
       href="/crear-publicacion"
-      className="flex items-center gap-[14px] bg-[#FFFDF9] border border-[#ECE0D0] rounded-[18px] px-[18px] py-3.5 mb-6 shadow-[0_4px_14px_-10px_rgba(120,90,60,0.4)]"
+      className="flex items-center gap-3.5 bg-[#FFFDF9] border border-[#ECE0D0] rounded-[18px] px-4.5 py-3.5 mb-6 shadow-[0_4px_14px_-10px_rgba(120,90,60,0.4)]"
     >
       <div className="w-10 h-10 rounded-full bg-[#F2937A] text-white font-display font-semibold text-base flex items-center justify-center flex-none">
         C
@@ -12,7 +12,7 @@ export default function Composer() {
       <span className="flex-1 text-[#A89A8B] text-[15px]">
         Compartí un momento…
       </span>
-      <span className="w-[38px] h-[38px] rounded-xl bg-[#FBE3D8] text-[#E0654A] flex items-center justify-center">
+      <span className="w-9.5 h-9.5 rounded-xl bg-[#FBE3D8] text-[#E0654A] flex items-center justify-center">
         <svg
           width="19"
           height="19"

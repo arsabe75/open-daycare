@@ -9,7 +9,7 @@ interface ChildAvatarProps {
 export default function ChildAvatar({ avatar, size, className = "" }: ChildAvatarProps) {
   const sizeClasses =
     size === "profile"
-      ? "w-[84px] h-[84px] text-[34px]"
+      ? "w-21 h-21 text-[34px]"
       : "w-12 h-12 text-[19px]";
 
   return (
