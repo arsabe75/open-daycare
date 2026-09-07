@@ -35,7 +35,7 @@ function ParentRow({ parent }: { parent: LinkedParent }) {
         </div>
       </div>
       <span
-        className="flex-none text-[10.5px] font-extrabold px-[9px] py-1 rounded-full"
+        className="flex-none text-[10.5px] font-extrabold px-2.25 py-1 rounded-full"
         style={{ backgroundColor: badge.bg, color: badge.color }}
       >
         {badge.text}

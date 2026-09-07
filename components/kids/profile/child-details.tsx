@@ -16,7 +16,7 @@ export default function ChildDetails({ child }: ChildDetailsProps) {
       {rows.map((row, index) => (
         <div
           key={row.label}
-          className={`flex justify-between px-[18px] py-[15px] ${
+          className={`flex justify-between px-4.5 py-3.75 ${
             index < rows.length - 1 ? "border-b border-[#F0E6D8]" : ""
           }`}
         >

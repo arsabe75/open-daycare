@@ -1,6 +1,6 @@
 export default function SearchBox() {
   return (
-    <div className="flex items-center gap-[11px] bg-[#FFFDF9] border border-[#ECE0D0] rounded-[14px] px-4 py-3">
+    <div className="flex items-center gap-2.75 bg-[#FFFDF9] border border-[#ECE0D0] rounded-[14px] px-4 py-3">
       <svg
         width="18"
         height="18"

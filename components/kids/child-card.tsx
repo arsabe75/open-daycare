@@ -31,11 +31,11 @@ export default function ChildCard({ child }: ChildCardProps) {
         </div>
       </div>
       {child.allergyBadge ? (
-        <span className="flex-none text-[11px] font-extrabold px-[9px] py-[5px] rounded-full bg-[#FBD8CC] text-[#D9684A]">
+        <span className="flex-none text-[11px] font-extrabold px-2.25 py-1.25 rounded-full bg-[#FBD8CC] text-[#D9684A]">
           {child.allergyBadge}
         </span>
       ) : parentCount === 0 ? (
-        <span className="flex-none text-[11px] font-extrabold px-[9px] py-[5px] rounded-full bg-[#F9D2DE] text-[#C56486]">
+        <span className="flex-none text-[11px] font-extrabold px-2.25 py-1.25 rounded-full bg-[#F9D2DE] text-[#C56486]">
           VINCULAR
         </span>
       ) : (

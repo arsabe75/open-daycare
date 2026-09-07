@@ -16,12 +16,12 @@ export default function Sidebar({ activeHref = "/" }: SidebarProps) {
     href === "/" ? activeHref === href : activeHref.startsWith(href);
 
   return (
-    <aside className="w-[248px] flex-none bg-[#FFFDF9] border-r border-[#ECE0D0] flex flex-col p-6 px-4 sticky top-0 h-screen">
+    <aside className="w-62 flex-none bg-[#FFFDF9] border-r border-[#ECE0D0] flex flex-col p-6 px-4 sticky top-0 h-screen">
       <Link
         href="/"
-        className="flex items-center gap-[11px] px-2 pt-1 pb-[22px]"
+        className="flex items-center gap-2.75 px-2 pt-1 pb-5.5"
       >
-        <div className="w-[38px] h-[38px] rounded-xl flex items-center justify-center flex-none bg-gradient-to-br from-[#F8C3A8] to-[#F2937A]">
+        <div className="w-9.5 h-9.5 rounded-xl flex items-center justify-center flex-none bg-linear-to-br from-[#F8C3A8] to-[#F2937A]">
           <svg
             width="21"
             height="21"
@@ -46,7 +46,7 @@ export default function Sidebar({ activeHref = "/" }: SidebarProps) {
 
       <Link
         href="/crear-publicacion"
-        className="flex items-center justify-center gap-2 w-full p-3 rounded-[14px] bg-gradient-to-b from-[#F4977E] to-[#EE8164] text-white font-extrabold text-[14.5px] shadow-[0_8px_18px_-8px_rgba(238,129,100,0.75)] mb-[18px]"
+        className="flex items-center justify-center gap-2 w-full p-3 rounded-[14px] bg-linear-to-b from-[#F4977E] to-[#EE8164] text-white font-extrabold text-[14.5px] shadow-[0_8px_18px_-8px_rgba(238,129,100,0.75)] mb-4.5"
       >
         <svg
           width="17"
@@ -68,7 +68,7 @@ export default function Sidebar({ activeHref = "/" }: SidebarProps) {
           <Link
             key={item.href}
             href={item.href}
-            className={`flex items-center gap-3 px-3 py-[11px] rounded-xl text-[14.5px] ${
+            className={`flex items-center gap-3 px-3 py-2.75 rounded-xl text-[14.5px] ${
               isActive(item.href)
                 ? "bg-[#FBE3D8] text-[#D9583C] font-extrabold"
                 : "bg-transparent text-[#6E6359] font-semibold"
@@ -139,8 +139,8 @@ export default function Sidebar({ activeHref = "/" }: SidebarProps) {
       </nav>
 
       <div className="border-t border-[#ECE0D0] pt-3.5 mt-2.5">
-        <div className="flex items-center gap-[11px] px-2 py-1.5">
-          <div className="w-[38px] h-[38px] rounded-full bg-[#F2937A] text-white font-display font-semibold text-base flex items-center justify-center flex-none">
+        <div className="flex items-center gap-2.75 px-2 py-1.5">
+          <div className="w-9.5 h-9.5 rounded-full bg-[#F2937A] text-white font-display font-semibold text-base flex items-center justify-center flex-none">
             C
           </div>
           <div className="flex-1 min-w-0">
