@@ -1,6 +1,6 @@
 # SPEC 02 — Niños: lista y perfil (solo UI)
 
-> **Estado:** Aprobado
+> **Estado:** Implementado
 > **Depende de:** SPEC 01
 > **Fecha:** 2026-09-07
 > **Objetivo:** Implementar las plantillas `references/pantallas/ninos.dc.html` y `references/pantallas/perfil-nino.dc.html` como las rutas `/kids` y `/kids/[id]` con estilo visual idéntico, datos mock tipados y componentes reutilizables, sin comportamiento real.
@@ -83,18 +83,18 @@ Reglas de derivación (en los componentes, no en los datos):
 
 ## Criterios de aceptación
 
-- [ ] `/kids` renderiza la lista visualmente idéntica a `references/pantallas/ninos.dc.html` en desktop (colores, tipografías Fredoka/Nunito, radios, sombras, espaciados).
-- [ ] La grilla muestra exactamente 8 tarjetas en 2 columnas y el separador dice "SALA SOLES · 8 niños" con conteo derivado de los datos.
-- [ ] Las tarjetas muestran badge MANÍ (Mateo), LACTOSA (Tomás) y VINCULAR (Valentina); las otras 5 muestran chevron.
-- [ ] El hover de una tarjeta cambia el borde a `#F2A78E` y la eleva 2px con transición de .15s.
-- [ ] El input de búsqueda se renderiza con placeholder "Buscar niño…" y no tiene handlers ni filtrado.
-- [ ] El sidebar muestra "Niños" activo en `/kids` y `/kids/[id]`, y Feed sigue activo en `/`.
-- [ ] Las tarjetas linkean a `/kids/{id}`; "Agregar niño" y "Editar" a `/kids/new`; "Resumen del día" a `/daily-summary`; "Vincular otro padre" a `/link-parent` (404 hoy).
-- [ ] `/kids/[id]` renderiza el perfil idéntico a `references/pantallas/perfil-nino.dc.html` con los datos de cada niño; el de Mateo coincide punto por punto con la plantilla.
-- [ ] Un niño sin `allergyNotes` no renderiza la caja roja; Valentina renderiza la tarjeta de padres solo con "Vincular otro padre".
-- [ ] `/kids/999` (id inexistente) responde con la 404 de Next.js vía `notFound()`.
-- [ ] Ningún botón ejecuta lógica real (sin mutaciones ni navegación fuera de los links declarados).
-- [ ] `npm run lint`, `npx tsc --noEmit` y `npm run build` pasan sin errores.
+- [x] `/kids` renderiza la lista visualmente idéntica a `references/pantallas/ninos.dc.html` en desktop (colores, tipografías Fredoka/Nunito, radios, sombras, espaciados).
+- [x] La grilla muestra exactamente 8 tarjetas en 2 columnas y el separador dice "SALA SOLES · 8 niños" con conteo derivado de los datos.
+- [x] Las tarjetas muestran badge MANÍ (Mateo), LACTOSA (Tomás) y VINCULAR (Valentina); las otras 5 muestran chevron.
+- [x] El hover de una tarjeta cambia el borde a `#F2A78E` y la eleva 2px con transición de .15s.
+- [x] El input de búsqueda se renderiza con placeholder "Buscar niño…" y no tiene handlers ni filtrado.
+- [x] El sidebar muestra "Niños" activo en `/kids` y `/kids/[id]`, y Feed sigue activo en `/`.
+- [x] Las tarjetas linkean a `/kids/{id}`; "Agregar niño" y "Editar" a `/kids/new`; "Resumen del día" a `/daily-summary`; "Vincular otro padre" a `/link-parent` (404 hoy).
+- [x] `/kids/[id]` renderiza el perfil idéntico a `references/pantallas/perfil-nino.dc.html` con los datos de cada niño; el de Mateo coincide punto por punto con la plantilla.
+- [x] Un niño sin `allergyNotes` no renderiza la caja roja; Valentina renderiza la tarjeta de padres solo con "Vincular otro padre".
+- [x] `/kids/999` (id inexistente) responde con la 404 de Next.js vía `notFound()`.
+- [x] Ningún botón ejecuta lógica real (sin mutaciones ni navegación fuera de los links declarados).
+- [x] `npm run lint`, `npx tsc --noEmit` y `npm run build` pasan sin errores.
 
 ## Decisiones
 
