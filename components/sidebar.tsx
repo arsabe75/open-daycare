@@ -1,13 +1,20 @@
 import Link from "next/link";
 
 const navItems = [
-  { href: "/", label: "Feed", active: true },
-  { href: "/ninos", label: "Niños", active: false },
-  { href: "/avisos", label: "Avisos", active: false },
-  { href: "/mi-cuenta", label: "Mi cuenta", active: false },
+  { href: "/", label: "Feed" },
+  { href: "/kids", label: "Niños" },
+  { href: "/avisos", label: "Avisos" },
+  { href: "/mi-cuenta", label: "Mi cuenta" },
 ];
 
-export default function Sidebar() {
+interface SidebarProps {
+  activeHref?: string;
+}
+
+export default function Sidebar({ activeHref = "/" }: SidebarProps) {
+  const isActive = (href: string) =>
+    href === "/" ? activeHref === href : activeHref.startsWith(href);
+
   return (
     <aside className="w-[248px] flex-none bg-[#FFFDF9] border-r border-[#ECE0D0] flex flex-col p-6 px-4 sticky top-0 h-screen">
       <Link
@@ -62,7 +69,7 @@ export default function Sidebar() {
             key={item.href}
             href={item.href}
             className={`flex items-center gap-3 px-3 py-[11px] rounded-xl text-[14.5px] ${
-              item.active
+              isActive(item.href)
                 ? "bg-[#FBE3D8] text-[#D9583C] font-extrabold"
                 : "bg-transparent text-[#6E6359] font-semibold"
             }`}
