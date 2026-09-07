@@ -48,6 +48,11 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 - /spec Usaremos esta habilidad para crear las especificaciones.
 - /spec-impl Usaremos esta skill para hacer las implementaciones.
+- /verify-spec Verifica, corrige y marca los Acceptance criteria del spec indicado usando el agente `spec-verifier`.
+
+## Agents
+
+- **spec-verifier** — Verifica, corrige y marca los Acceptance criteria de un spec en `specs/`. Usa Context7 para validar recomendaciones de Next.js y Playwright MCP con visión para comparar pantallas.
 
 ## Reglas de código
 
