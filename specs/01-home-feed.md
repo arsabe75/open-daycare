@@ -1,6 +1,6 @@
 # SPEC 01 — Home con plantilla de feed
 
-> **Estado:** Aprobado
+> **Estado:** Verificado
 > **Depende de:** —
 > **Fecha:** 2026-09-03
 > **Objetivo:** Implementar la plantilla `references/pantallas/feed.dc.html` como home (`/`) con estilo visual idéntico, usando datos mock y sin autenticación ni base de datos.
@@ -60,13 +60,13 @@ Convención: los tipos internos están en inglés; el mapeo a texto visible qued
 
 ## Criterios de aceptación
 
-- [ ] `/` renderiza el feed completo sin errores en consola.
-- [ ] El resultado visual es idéntico a `references/pantallas/feed.dc.html` en desktop (colores, tipografías Fredoka/Nunito, radios, sombras, espaciados).
-- [ ] El sidebar muestra logo OpenDayCare ("Sala Soles"), botón "Nueva publicación", nav con Feed activo y usuario "Caro Giménez · Maestra · Soles".
-- [ ] Se muestran exactamente 3 posts con badges LOGRO, ACTIVIDAD y ANUNCIO, contadores 3/1, 5/2 y 8/0, y el post de actividad con su placeholder de foto.
-- [ ] Los links apuntan a `/crear-publicacion`, `/ninos`, `/avisos`, `/mi-cuenta`, `/login`, `/detalle-publicacion` y `/foto` (aunque hoy den 404).
-- [ ] Ningún botón ejecuta lógica real (sin handlers ni mutaciones).
-- [ ] `npm run lint`, `npx tsc --noEmit` y `npm run build` pasan sin errores.
+- [x] `/` renderiza el feed completo sin errores en consola.
+- [x] El resultado visual es idéntico a `references/pantallas/feed.dc.html` en desktop (colores, tipografías Fredoka/Nunito, radios, sombras, espaciados).
+- [x] El sidebar muestra logo OpenDayCare ("Sala Soles"), botón "Nueva publicación", nav con Feed activo y usuario "Caro Giménez · Maestra · Soles".
+- [x] Se muestran exactamente 3 posts con badges LOGRO, ACTIVIDAD y ANUNCIO, contadores 3/1, 5/2 y 8/0, y el post de actividad con su placeholder de foto.
+- [x] Los links apuntan a `/crear-publicacion`, `/ninos`, `/avisos`, `/mi-cuenta`, `/login`, `/detalle-publicacion` y `/foto` (aunque hoy den 404).
+- [x] Ningún botón ejecuta lógica real (sin handlers ni mutaciones).
+- [x] `npm run lint`, `npx tsc --noEmit` y `npm run build` pasan sin errores.
 
 ## Decisiones
 

@@ -63,7 +63,7 @@ export default function PostCard({ post }: PostCardProps) {
             style={{ backgroundColor: config.dot }}
           />
           <span
-            className="text-xs font-extrabold tracking-wide"
+            className="text-xs font-extrabold tracking-[0.5px]"
             style={{ color: config.dot }}
           >
             {config.label}

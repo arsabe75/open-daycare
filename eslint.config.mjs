@@ -14,6 +14,8 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     // Design references are not application code:
     "references/**",
+    // Playwright MCP artifacts are not application code:
+    ".playwright-mcp/**",
   ]),
 ]);
 
