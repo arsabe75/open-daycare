@@ -1,6 +1,6 @@
 # SPEC 03 — Login y activación de cuenta (solo UI)
 
-> **Estado:** Aprobado
+> **Estado:** Implementado
 > **Depende de:** SPEC 01, SPEC 02
 > **Fecha:** 2026-09-08
 > **Objetivo:** Implementar las plantillas `references/pantallas/login.dc.html` y `references/pantallas/activar-cuenta.dc.html` como las rutas `/login` y `/activate-account` con estilo visual idéntico, sin el selector de rol Personal/Familia y sin comportamiento real.
@@ -40,15 +40,15 @@ Este spec no introduce estructuras de datos nuevas. Los datos de la pantalla de 
 
 ## Criterios de aceptación
 
-- [ ] `/login` renderiza visualmente idéntico a `references/pantallas/login.dc.html` en desktop, excepto el bloque "INGRESO COMO" que no existe.
-- [ ] Los inputs de `/login` tienen `defaultValue="caro@opendaycare.com"` y placeholder "••••••••", son editables y la página es server component (sin `"use client"`).
-- [ ] "¿Olvidaste tu contraseña?" linkea a `/forgot-password` (404 hoy); el CTA "Iniciar sesión" a `/`; "Activá tu cuenta" a `/activate-account`.
-- [ ] `/activate-account` renderiza visualmente idéntico a `references/pantallas/activar-cuenta.dc.html` en desktop.
-- [ ] La tarjeta de invitación muestra "Mateo · Sala Soles" con avatar "M"; código y email tienen los `defaultValue` de la plantilla; el checkbox de autorización se renderiza marcado y puede desmarcarse sin JS.
-- [ ] El CTA "Activar mi cuenta" linkea a `/`; "Iniciar sesión" del pie a `/login`.
-- [ ] El logout del sidebar navega a `/login` y ambas páginas renderizan sin sidebar.
-- [ ] Ningún input ni botón ejecuta lógica real (sin handlers, validación ni mutaciones).
-- [ ] `npm run lint`, `npx tsc --noEmit` y `npm run build` pasan sin errores.
+- [x] `/login` renderiza visualmente idéntico a `references/pantallas/login.dc.html` en desktop, excepto el bloque "INGRESO COMO" que no existe.
+- [x] Los inputs de `/login` tienen `defaultValue="caro@opendaycare.com"` y placeholder "••••••••", son editables y la página es server component (sin `"use client"`).
+- [x] "¿Olvidaste tu contraseña?" linkea a `/forgot-password` (404 hoy); el CTA "Iniciar sesión" a `/`; "Activá tu cuenta" a `/activate-account`.
+- [x] `/activate-account` renderiza visualmente idéntico a `references/pantallas/activar-cuenta.dc.html` en desktop.
+- [x] La tarjeta de invitación muestra "Mateo · Sala Soles" con avatar "M"; código y email tienen los `defaultValue` de la plantilla; el checkbox de autorización se renderiza marcado y puede desmarcarse sin JS.
+- [x] El CTA "Activar mi cuenta" linkea a `/`; "Iniciar sesión" del pie a `/login`.
+- [x] El logout del sidebar navega a `/login` y ambas páginas renderizan sin sidebar.
+- [x] Ningún input ni botón ejecuta lógica real (sin handlers, validación ni mutaciones).
+- [x] `npm run lint`, `npx tsc --noEmit` y `npm run build` pasan sin errores.
 
 ## Decisiones
 
