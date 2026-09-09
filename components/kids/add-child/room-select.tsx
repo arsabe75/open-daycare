@@ -73,7 +73,7 @@ export default function RoomSelect({
       </button>
 
       {open && (
-        <div className="mt-1.5 w-full rounded-[14px] border border-[#EADFD0] bg-white shadow-[0_8px_18px_-8px_rgba(63,54,46,.2)] overflow-hidden">
+        <div className="absolute top-full left-0 z-10 mt-1.5 w-full rounded-[14px] border border-[#EADFD0] bg-white shadow-[0_8px_18px_-8px_rgba(63,54,46,.2)] overflow-hidden">
           {rooms.map((room) => (
             <button
               key={room.id}
