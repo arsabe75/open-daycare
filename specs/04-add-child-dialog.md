@@ -1,6 +1,6 @@
 # SPEC 04 — Diálogo "Agregar niño"
 
-> **Estado:** Aprobado
+> **Estado:** Implementado
 > **Depende de:** SPEC 02
 > **Fecha:** 2026-09-09
 > **Objetivo:** Implementar el diálogo de `references/pantallas/agregar-nino.dc.html` al presionar "+ Agregar niño" en `/kids`, con validación de obligatorios (nombre, fecha de nacimiento con máscara DD/MM/AAAA, sala), 3 salas mock y alta del niño en estado local.
@@ -54,16 +54,16 @@ export const rooms: Room[]; // Soles, Lunas, Arcoíris
 
 ## Criterios de aceptación
 
-- [ ] En `/kids`, "+ Agregar niño" abre el diálogo (ya no navega a `/kids/new`) y este es visualmente idéntico a `references/pantallas/agregar-nino.dc.html` en desktop.
-- [ ] El input de fecha aplica máscara DD/MM/AAAA: solo acepta dígitos, inserta "/" automáticamente y limita a 10 caracteres.
-- [ ] El selector SALA es un dropdown custom con las 3 salas de `lib/data/rooms.ts`, preseleccionado "Soles".
-- [ ] "Guardar" con nombre vacío, fecha incompleta/inválida (ej. 31/02/2024) o sala sin seleccionar muestra errores inline en coral y no agrega ni cierra.
-- [ ] "Guardar" válido agrega el niño a la grilla (tarjeta con avatar, edad y badge correctos), actualiza el conteo del separador, cierra el diálogo y limpia el formulario.
-- [ ] El niño agregado con alergias muestra `allergyBadge` (primera etiqueta) y sin padres vinculados muestra badge VINCULAR.
-- [ ] El diálogo se cierra sin guardar con "Cancelar", ESC y click en el backdrop.
-- [ ] El estado es solo en memoria: al recargar `/kids` vuelven los 8 niños mock.
-- [ ] "Editar" en `/kids/[id]` sigue linkeando a `/kids/new` (404); no se creó la ruta.
-- [ ] `npm run lint`, `npx tsc --noEmit` y `npm run build` pasan sin errores.
+- [x] En `/kids`, "+ Agregar niño" abre el diálogo (ya no navega a `/kids/new`) y este es visualmente idéntico a `references/pantallas/agregar-nino.dc.html` en desktop.
+- [x] El input de fecha aplica máscara DD/MM/AAAA: solo acepta dígitos, inserta "/" automáticamente y limita a 10 caracteres.
+- [x] El selector SALA es un dropdown custom con las 3 salas de `lib/data/rooms.ts`, preseleccionado "Soles".
+- [x] "Guardar" con nombre vacío, fecha incompleta/inválida (ej. 31/02/2024) o sala sin seleccionar muestra errores inline en coral y no agrega ni cierra.
+- [x] "Guardar" válido agrega el niño a la grilla (tarjeta con avatar, edad y badge correctos), actualiza el conteo del separador, cierra el diálogo y limpia el formulario.
+- [x] El niño agregado con alergias muestra `allergyBadge` (primera etiqueta) y sin padres vinculados muestra badge VINCULAR.
+- [x] El diálogo se cierra sin guardar con "Cancelar", ESC y click en el backdrop.
+- [x] El estado es solo en memoria: al recargar `/kids` vuelven los 8 niños mock.
+- [x] "Editar" en `/kids/[id]` sigue linkeando a `/kids/new` (404); no se creó la ruta.
+- [x] `npm run lint`, `npx tsc --noEmit` y `npm run build` pasan sin errores.
 
 ## Decisiones
 

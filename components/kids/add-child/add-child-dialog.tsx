@@ -39,12 +39,6 @@ export default function AddChildDialog({
 
   useEffect(() => {
     if (open) {
-      setFullName("");
-      setBirthDate("");
-      setRoomId(rooms[0]?.id ?? "");
-      setAllergies("");
-      setMedicalNotes("");
-      setErrors({});
       firstInputRef.current?.focus();
       document.body.style.overflow = "hidden";
     } else {
@@ -54,7 +48,7 @@ export default function AddChildDialog({
     return () => {
       document.body.style.overflow = "";
     };
-  }, [open, rooms]);
+  }, [open]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {

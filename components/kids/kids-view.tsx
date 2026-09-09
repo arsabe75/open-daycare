@@ -15,11 +15,17 @@ interface KidsViewProps {
 export default function KidsView({ initialChildren, rooms }: KidsViewProps) {
   const [children, setChildren] = useState<Child[]>(initialChildren);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogKey, setDialogKey] = useState(0);
 
   const count = children.length;
 
   const handleAddChild = (newChild: Child) => {
     setChildren((prev) => [...prev, newChild]);
+  };
+
+  const openDialog = () => {
+    setDialogKey((prev) => prev + 1);
+    setDialogOpen(true);
   };
 
   return (
@@ -36,7 +42,7 @@ export default function KidsView({ initialChildren, rooms }: KidsViewProps) {
           </div>
           <button
             type="button"
-            onClick={() => setDialogOpen(true)}
+            onClick={openDialog}
             className="flex items-center gap-2 px-4.5 py-2.75 rounded-[14px] bg-linear-to-b from-[#F4977E] to-[#EE8164] text-white font-extrabold text-[14.5px] shadow-[0_8px_18px_-8px_rgba(238,129,100,0.7)] cursor-pointer"
           >
             <svg
@@ -75,6 +81,7 @@ export default function KidsView({ initialChildren, rooms }: KidsViewProps) {
       </div>
 
       <AddChildDialog
+        key={dialogKey}
         open={dialogOpen}
         onClose={() => setDialogOpen(false)}
         onAdd={handleAddChild}
