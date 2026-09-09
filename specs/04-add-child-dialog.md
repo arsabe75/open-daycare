@@ -1,6 +1,6 @@
 # SPEC 04 — Diálogo "Agregar niño"
 
-> **Estado:** Implementado
+> **Estado:** Aprobado
 > **Depende de:** SPEC 02
 > **Fecha:** 2026-09-09
 > **Objetivo:** Implementar el diálogo de `references/pantallas/agregar-nino.dc.html` al presionar "+ Agregar niño" en `/kids`, con validación de obligatorios (nombre, fecha de nacimiento con máscara DD/MM/AAAA, sala), 3 salas mock y alta del niño en estado local.
