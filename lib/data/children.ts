@@ -1,4 +1,4 @@
-export type ParentRelation = "mom" | "dad";
+export type ParentRelation = "mom" | "dad" | "guardian";
 export type ParentStatus = "active" | "pending";
 
 export interface Avatar {
