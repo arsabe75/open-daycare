@@ -37,18 +37,8 @@ export default function LinkParentDialog({
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [relation, setRelation] = useState<ParentRelation>("mom");
-  const [inviteCode, setInviteCode] = useState("");
+  const [inviteCode] = useState(() => generateInviteCode());
   const [errors, setErrors] = useState<FormErrors>({});
-
-  useEffect(() => {
-    if (isOpen) {
-      setName("");
-      setEmail("");
-      setRelation("mom");
-      setErrors({});
-      setInviteCode(generateInviteCode());
-    }
-  }, [isOpen]);
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {

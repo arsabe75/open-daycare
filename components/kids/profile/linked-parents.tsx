@@ -96,12 +96,14 @@ export default function LinkedParents({ child }: LinkedParentsProps) {
         </div>
       </div>
 
-      <LinkParentDialog
-        isOpen={isDialogOpen}
-        onClose={() => setIsDialogOpen(false)}
-        onLink={handleLink}
-        childName={child.name}
-      />
+      {isDialogOpen && (
+        <LinkParentDialog
+          isOpen={isDialogOpen}
+          onClose={() => setIsDialogOpen(false)}
+          onLink={handleLink}
+          childName={child.name}
+        />
+      )}
     </>
   );
 }

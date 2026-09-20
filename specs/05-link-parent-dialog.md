@@ -1,6 +1,6 @@
 # SPEC 05 — Diálogo "Vincular padre"
 
-> **Estado:** Aprobado
+> **Estado:** Implementado
 > **Depende de:** SPEC 02, SPEC 04
 > **Fecha:** 2026-09-20
 > **Objetivo:** Implementar el diálogo de `references/pantallas/vincular-padre.dc.html` al presionar "Vincular otro padre" en `/kids/[id]`, con validación de nombre/email, 3 parentescos (Mamá, Papá, Tutor/a), código de invitación generado y alta del padre en estado local como PENDIENTE.
@@ -59,15 +59,15 @@ export function buildLinkedParent(
 
 ## Criterios de aceptación
 
-- [ ] En `/kids/[id]`, "Vincular otro padre" abre el diálogo (ya no navega a `/link-parent`) y este es visualmente idéntico a `references/pantallas/vincular-padre.dc.html` en desktop, con el nombre del niño real en cabecera y banner.
-- [ ] El selector PARENTESCO tiene 3 píldoras (Mamá preseleccionado, Papá, Tutor/a) con estilos de seleccionada/no seleccionada iguales a la plantilla.
-- [ ] La caja de código muestra un código de 5 caracteres generado al abrir el diálogo (distinto entre aperturas) con "Vence en 7 días" fijo.
-- [ ] "Enviar invitación" con nombre vacío o email vacío/inválido muestra errores inline en coral y no agrega ni cierra.
-- [ ] "Enviar invitación" válido agrega la fila del padre con badge PENDIENTE y subtítulo "{Mamá|Papá|Tutor/a} · invitación enviada", cierra el diálogo y limpia el formulario.
-- [ ] En Valentina (sin padres), vincular hace desaparecer el estado vacío y el badge VINCULAR de su tarjeta en `/kids` no cambia (estado por página, en memoria).
-- [ ] El diálogo se cierra sin guardar con X, ESC y click en el backdrop.
-- [ ] El estado es solo en memoria: al recargar `/kids/[id]` vuelven los padres mock originales.
-- [ ] `npm run lint`, `npx tsc --noEmit` y `npm run build` pasan sin errores.
+- [x] En `/kids/[id]`, "Vincular otro padre" abre el diálogo (ya no navega a `/link-parent`) y este es visualmente idéntico a `references/pantallas/vincular-padre.dc.html` en desktop, con el nombre del niño real en cabecera y banner.
+- [x] El selector PARENTESCO tiene 3 píldoras (Mamá preseleccionado, Papá, Tutor/a) con estilos de seleccionada/no seleccionada iguales a la plantilla.
+- [x] La caja de código muestra un código de 5 caracteres generado al abrir el diálogo (distinto entre aperturas) con "Vence en 7 días" fijo.
+- [x] "Enviar invitación" con nombre vacío o email vacío/inválido muestra errores inline en coral y no agrega ni cierra.
+- [x] "Enviar invitación" válido agrega la fila del padre con badge PENDIENTE y subtítulo "{Mamá|Papá|Tutor/a} · invitación enviada", cierra el diálogo y limpia el formulario.
+- [x] En Valentina (sin padres), vincular hace desaparecer el estado vacío y el badge VINCULAR de su tarjeta en `/kids` no cambia (estado por página, en memoria).
+- [x] El diálogo se cierra sin guardar con X, ESC y click en el backdrop.
+- [x] El estado es solo en memoria: al recargar `/kids/[id]` vuelven los padres mock originales.
+- [x] `npm run lint`, `npx tsc --noEmit` y `npm run build` pasan sin errores.
 
 ## Decisiones
 
