@@ -1,5 +1,9 @@
-import Link from "next/link";
+"use client";
+
+import { useState } from "react";
 import ChildAvatar from "../child-avatar";
+import LinkParentDialog from "./link-parent-dialog";
+import { buildLinkedParent } from "@/lib/parent-utils";
 import type { Child, LinkedParent, ParentRelation, ParentStatus } from "@/lib/data/children";
 
 interface LinkedParentsProps {
@@ -7,7 +11,9 @@ interface LinkedParentsProps {
 }
 
 function relationLabel(relation: ParentRelation): string {
-  return relation === "mom" ? "Mamá" : "Papá";
+  if (relation === "mom") return "Mamá";
+  if (relation === "dad") return "Papá";
+  return "Tutor/a";
 }
 
 function statusLabel(status: ParentStatus): string {
@@ -45,38 +51,57 @@ function ParentRow({ parent }: { parent: LinkedParent }) {
 }
 
 export default function LinkedParents({ child }: LinkedParentsProps) {
+  const [linkedParents, setLinkedParents] = useState<LinkedParent[]>(child.linkedParents);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  function handleLink(name: string, relation: ParentRelation) {
+    const newParent = buildLinkedParent(name, relation, linkedParents.length);
+    setLinkedParents((prev) => [...prev, newParent]);
+    setIsDialogOpen(false);
+  }
+
   return (
-    <div className="bg-[#FFFDF9] border border-[#ECE0D0] rounded-2xl p-4">
-      <div className="text-[12.5px] font-extrabold tracking-[0.8px] text-[#8A7C6D] mb-3.5">
-        PADRES VINCULADOS
+    <>
+      <div className="bg-[#FFFDF9] border border-[#ECE0D0] rounded-2xl p-4">
+        <div className="text-[12.5px] font-extrabold tracking-[0.8px] text-[#8A7C6D] mb-3.5">
+          PADRES VINCULADOS
+        </div>
+        <div className="flex flex-col gap-3.5">
+          {linkedParents.map((parent) => (
+            <ParentRow key={parent.id} parent={parent} />
+          ))}
+          <button
+            type="button"
+            onClick={() => setIsDialogOpen(true)}
+            className="flex items-center gap-3 pt-2 text-left cursor-pointer"
+          >
+            <span className="w-10 h-10 rounded-full border-[1.5px] border-dashed border-[#D8CBBA] flex items-center justify-center text-[#B0A290] flex-none">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M12 5v14M5 12h14" />
+              </svg>
+            </span>
+            <span className="font-extrabold text-[14.5px] text-[#C5503A]">
+              Vincular otro padre
+            </span>
+          </button>
+        </div>
       </div>
-      <div className="flex flex-col gap-3.5">
-        {child.linkedParents.map((parent) => (
-          <ParentRow key={parent.id} parent={parent} />
-        ))}
-        <Link
-          href="/link-parent"
-          className="flex items-center gap-3 pt-2"
-        >
-          <span className="w-10 h-10 rounded-full border-[1.5px] border-dashed border-[#D8CBBA] flex items-center justify-center text-[#B0A290] flex-none">
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M12 5v14M5 12h14" />
-            </svg>
-          </span>
-          <span className="font-extrabold text-[14.5px] text-[#C5503A]">
-            Vincular otro padre
-          </span>
-        </Link>
-      </div>
-    </div>
+
+      <LinkParentDialog
+        isOpen={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+        onLink={handleLink}
+        childName={child.name}
+      />
+    </>
   );
 }
