@@ -1,32 +1,21 @@
 import Link from "next/link";
-import type { Post, PostType } from "@/lib/data/posts";
-
-const typeConfig: Record<
-  PostType,
-  {
-    label: string;
-    dot: string;
-    bg: string;
-  }
-> = {
-  achievement: { label: "LOGRO", dot: "#3E9B6C", bg: "#CFEBD8" },
-  activity: { label: "ACTIVIDAD", dot: "#2E89A6", bg: "#C7E7F1" },
-  announcement: { label: "ANUNCIO", dot: "#4E72C8", bg: "#CCD8F4" },
-};
+import type { Post } from "@/lib/data/posts";
+import { POST_TYPE_META } from "@/lib/post-types";
 
 interface PostCardProps {
   post: Post;
 }
 
 export default function PostCard({ post }: PostCardProps) {
-  const config = typeConfig[post.type];
-  const isAnnouncement = post.type === "announcement";
+  const meta = POST_TYPE_META[post.type];
+  const showMegaphone = !post.childName;
   const initial = post.childName ? post.childName.charAt(0).toUpperCase() : null;
+  const title = post.childName ?? (post.type === "announcement" ? "Anuncio general" : "Toda la sala");
 
   return (
     <article className="bg-[#FFFDF9] border border-[#ECE0D0] rounded-[20px] p-5 px-5.5 shadow-[0_4px_16px_-12px_rgba(120,90,60,0.5)]">
       <div className="flex items-center gap-3 mb-3.5">
-        {isAnnouncement ? (
+        {showMegaphone ? (
           <div className="w-11 h-11 rounded-full bg-[#CCD8F4] text-[#4E72C8] flex items-center justify-center flex-none">
             <svg
               width="20"
@@ -48,7 +37,7 @@ export default function PostCard({ post }: PostCardProps) {
         )}
         <div className="flex-1">
           <div className="font-display font-semibold text-[16.5px] text-[#3F362E]">
-            {isAnnouncement ? "Anuncio general" : post.childName}
+            {title}
           </div>
           <div className="text-[12.5px] text-[#A89A8B]">
             {post.time} · {post.authorNote}
@@ -56,17 +45,17 @@ export default function PostCard({ post }: PostCardProps) {
         </div>
         <div
           className="flex items-center gap-1.75 px-3 py-1.5 rounded-full"
-          style={{ backgroundColor: config.bg }}
+          style={{ backgroundColor: meta.pastel }}
         >
           <span
             className="w-2 h-2 rounded-full"
-            style={{ backgroundColor: config.dot }}
+            style={{ backgroundColor: meta.accent }}
           />
           <span
             className="text-xs font-extrabold tracking-[0.5px]"
-            style={{ color: config.dot }}
+            style={{ color: meta.accent }}
           >
-            {config.label}
+            {meta.label}
           </span>
         </div>
       </div>
