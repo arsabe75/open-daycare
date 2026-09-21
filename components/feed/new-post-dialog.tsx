@@ -22,9 +22,8 @@ export default function NewPostDialog({
   onClose,
   onPublish,
 }: NewPostDialogProps) {
-  const [selectedChildId, setSelectedChildId] = useState<string | "classroom" | null>(
-    null,
-  );
+  const [selectedChildIds, setSelectedChildIds] = useState<string[]>([]);
+  const [isClassroom, setIsClassroom] = useState(false);
   const [selectedType, setSelectedType] = useState<PostType>("food");
   const [description, setDescription] = useState("");
   const [errors, setErrors] = useState<{
@@ -56,7 +55,7 @@ export default function NewPostDialog({
   function handlePublish() {
     const nextErrors: { para?: string; description?: string } = {};
 
-    if (selectedChildId === null) {
+    if (!isClassroom && selectedChildIds.length === 0) {
       nextErrors.para = "Seleccioná un destinatario.";
     }
 
@@ -69,14 +68,13 @@ export default function NewPostDialog({
       return;
     }
 
-    const child: Child | "classroom" =
-      selectedChildId === "classroom"
-        ? "classroom"
-        : (children.find((c) => c.id === selectedChildId) as Child);
+    const selectedChildren: Child[] | "classroom" = isClassroom
+      ? "classroom"
+      : children.filter((child) => selectedChildIds.includes(child.id));
 
     const post = buildPost({
       type: selectedType,
-      child,
+      children: selectedChildren,
       text: description,
     });
 
@@ -116,12 +114,19 @@ export default function NewPostDialog({
           </div>
           <div className="mb-[22px] flex flex-wrap gap-[9px]">
             {children.map((child) => {
-              const selected = selectedChildId === child.id;
+              const selected = selectedChildIds.includes(child.id);
               return (
                 <button
                   key={child.id}
                   type="button"
-                  onClick={() => setSelectedChildId(child.id)}
+                  onClick={() => {
+                    setIsClassroom(false);
+                    setSelectedChildIds((prev) =>
+                      prev.includes(child.id)
+                        ? prev.filter((id) => id !== child.id)
+                        : [...prev, child.id],
+                    );
+                  }}
                   className={`flex items-center gap-2 rounded-full px-3.5 py-1.5 text-[14px] font-bold cursor-pointer ${
                     selected
                       ? "border-[1.5px] border-[#3F362E] bg-[#3F362E] text-white"
@@ -143,9 +148,12 @@ export default function NewPostDialog({
             })}
             <button
               type="button"
-              onClick={() => setSelectedChildId("classroom")}
+              onClick={() => {
+                setSelectedChildIds([]);
+                setIsClassroom((prev) => !prev);
+              }}
               className={`rounded-full px-4 py-1.5 text-[14px] font-bold cursor-pointer ${
-                selectedChildId === "classroom"
+                isClassroom
                   ? "border-[1.5px] border-[#3F362E] bg-[#3F362E] text-white"
                   : "border-[1.5px] border-[#ECE0D0] bg-[#FFFDF9] text-[#6E6359]"
               }`}
