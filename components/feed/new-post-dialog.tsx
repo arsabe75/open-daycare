@@ -33,15 +33,6 @@ export default function NewPostDialog({
   }>({});
 
   useEffect(() => {
-    if (open) {
-      setSelectedChildId(null);
-      setSelectedType("food");
-      setDescription("");
-      setErrors({});
-    }
-  }, [open]);
-
-  useEffect(() => {
     if (!open) return;
 
     function handleKeyDown(event: KeyboardEvent) {

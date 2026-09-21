@@ -1,6 +1,6 @@
 # SPEC 06 — Diálogo "Nueva publicación"
 
-> **Estado:** Aprobado
+> **Estado:** Implementado
 > **Depende de:** SPEC 01, SPEC 02
 > **Fecha:** 2026-09-21
 > **Objetivo:** Implementar el modal de `references/pantallas/crear-publicacion.dc.html` al presionar "+ Nueva publicación" (sidebar, todas las páginas) o el Composer (home), con selección de niño/sala, 7 tipos, validación inline y alta del post en el feed en memoria.
@@ -77,16 +77,16 @@ export function buildPost(input: {
 
 ## Criterios de aceptación
 
-- [ ] En `/`, el botón "+ Nueva publicación" del sidebar y el Composer abren el modal (ya no navegan a `/crear-publicacion`), visualmente idéntico a `references/pantallas/crear-publicacion.dc.html` en desktop.
-- [ ] En `/kids` y `/kids/[id]`, el botón del sidebar abre el mismo modal; publicar solo lo cierra.
-- [ ] PARA lista los 8 niños de `lib/data/children.ts` (nombre de pila + avatar real) y "Toda la sala"; selección única y excluyente.
-- [ ] TIPO muestra 7 píldoras con "Comida" preseleccionado; seleccionada = sólido accent + texto blanco.
-- [ ] "Publicar" sin niño/sala elegido o con descripción vacía muestra errores inline en coral y no agrega ni cierra.
-- [ ] "Publicar" válido prepende el post en el feed de `/` con tipo/badge correctos, hora actual, "publicado por vos", likes 0 y comments 0; con "Toda la sala" muestra megáfono y "Para: toda la sala".
-- [ ] Los 3 posts mock siguen renderizándose idénticos (badges LOGRO/ACTIVIDAD/ANUNCIO, "Anuncio general").
-- [ ] El modal se cierra sin guardar con "Cancelar", ESC y backdrop, y reabrirlo muestra el formulario limpio.
-- [ ] El estado es solo en memoria: al recargar `/` vuelven los 3 posts mock.
-- [ ] `npm run lint`, `npx tsc --noEmit` y `npm run build` pasan sin errores.
+- [x] En `/`, el botón "+ Nueva publicación" del sidebar y el Composer abren el modal (ya no navegan a `/crear-publicacion`), visualmente idéntico a `references/pantallas/crear-publicacion.dc.html` en desktop.
+- [x] En `/kids` y `/kids/[id]`, el botón del sidebar abre el mismo modal; publicar solo lo cierra.
+- [x] PARA lista los 8 niños de `lib/data/children.ts` (nombre de pila + avatar real) y "Toda la sala"; selección única y excluyente.
+- [x] TIPO muestra 7 píldoras con "Comida" preseleccionado; seleccionada = sólido accent + texto blanco.
+- [x] "Publicar" sin niño/sala elegido o con descripción vacía muestra errores inline en coral y no agrega ni cierra.
+- [x] "Publicar" válido prepende el post en el feed de `/` con tipo/badge correctos, hora actual, "publicado por vos", likes 0 y comments 0; con "Toda la sala" muestra megáfono y "Para: toda la sala".
+- [x] Los 3 posts mock siguen renderizándose idénticos (badges LOGRO/ACTIVIDAD/ANUNCIO, "Anuncio general").
+- [x] El modal se cierra sin guardar con "Cancelar", ESC y backdrop, y reabrirlo muestra el formulario limpio.
+- [x] El estado es solo en memoria: al recargar `/` vuelven los 3 posts mock.
+- [x] `npm run lint`, `npx tsc --noEmit` y `npm run build` pasan sin errores.
 
 ## Decisiones
 
