@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import Sidebar from "@/components/sidebar";
+import SidebarWithDialog from "@/components/sidebar-with-dialog";
 import ChildAvatar from "@/components/kids/child-avatar";
 import AllergyAlert from "@/components/kids/profile/allergy-alert";
 import ChildDetails from "@/components/kids/profile/child-details";
@@ -19,7 +19,7 @@ export default async function KidProfilePage({
 
   return (
     <div className="flex min-h-screen bg-[#F6ECDF]">
-      <Sidebar activeHref="/kids" />
+      <SidebarWithDialog activeHref="/kids" />
       <main className="flex-1 min-w-0 h-screen overflow-y-auto">
         <div className="max-w-205 w-full mx-auto px-10 pt-8.5 pb-20">
           <Link
