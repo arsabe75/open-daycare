@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 
 const navItems = [
@@ -9,9 +11,10 @@ const navItems = [
 
 interface SidebarProps {
   activeHref?: string;
+  onNewPost?: () => void;
 }
 
-export default function Sidebar({ activeHref = "/" }: SidebarProps) {
+export default function Sidebar({ activeHref = "/", onNewPost }: SidebarProps) {
   const isActive = (href: string) =>
     href === "/" ? activeHref === href : activeHref.startsWith(href);
 
@@ -44,9 +47,10 @@ export default function Sidebar({ activeHref = "/" }: SidebarProps) {
         </div>
       </Link>
 
-      <Link
-        href="/crear-publicacion"
-        className="flex items-center justify-center gap-2 w-full p-3 rounded-[14px] bg-linear-to-b from-[#F4977E] to-[#EE8164] text-white font-extrabold text-[14.5px] shadow-[0_8px_18px_-8px_rgba(238,129,100,0.75)] mb-4.5"
+      <button
+        type="button"
+        onClick={onNewPost}
+        className="flex items-center justify-center gap-2 w-full p-3 rounded-[14px] bg-linear-to-b from-[#F4977E] to-[#EE8164] text-white font-extrabold text-[14.5px] shadow-[0_8px_18px_-8px_rgba(238,129,100,0.75)] mb-4.5 cursor-pointer focus:outline-none"
       >
         <svg
           width="17"
@@ -61,7 +65,7 @@ export default function Sidebar({ activeHref = "/" }: SidebarProps) {
           <path d="M12 5v14M5 12h14" />
         </svg>
         Nueva publicación
-      </Link>
+      </button>
 
       <nav className="flex flex-col gap-1 flex-1">
         {navItems.map((item) => (
