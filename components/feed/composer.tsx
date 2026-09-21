@@ -1,10 +1,15 @@
-import Link from "next/link";
+"use client";
 
-export default function Composer() {
+interface ComposerProps {
+  onClick?: () => void;
+}
+
+export default function Composer({ onClick }: ComposerProps) {
   return (
-    <Link
-      href="/crear-publicacion"
-      className="flex items-center gap-3.5 bg-[#FFFDF9] border border-[#ECE0D0] rounded-[18px] px-4.5 py-3.5 mb-6 shadow-[0_4px_14px_-10px_rgba(120,90,60,0.4)]"
+    <button
+      type="button"
+      onClick={onClick}
+      className="flex w-full items-center gap-3.5 rounded-[18px] border border-[#ECE0D0] bg-[#FFFDF9] px-4.5 py-3.5 mb-6 shadow-[0_4px_14px_-10px_rgba(120,90,60,0.4)] text-left focus:outline-none cursor-pointer"
     >
       <div className="w-10 h-10 rounded-full bg-[#F2937A] text-white font-display font-semibold text-base flex items-center justify-center flex-none">
         C
@@ -27,6 +32,6 @@ export default function Composer() {
           <circle cx="12" cy="13" r="4" />
         </svg>
       </span>
-    </Link>
+    </button>
   );
 }
