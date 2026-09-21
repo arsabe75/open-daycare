@@ -16,19 +16,38 @@ function generateId(): string {
 
 export function buildPost(input: {
   type: PostType;
-  child: Child | "classroom";
+  children: Child[] | "classroom";
   text: string;
 }): Post {
-  const { type, child, text } = input;
-  const isClassroom = child === "classroom";
+  const { type, children: selectedChildren, text } = input;
+  const isClassroom = selectedChildren === "classroom";
+
+  if (isClassroom) {
+    return {
+      id: generateId(),
+      type,
+      childName: undefined,
+      audience: "toda la sala",
+      time: currentTime(),
+      authorNote: "publicado por vos",
+      text: text.trim(),
+      likes: 0,
+      comments: 0,
+    };
+  }
+
+  const names = selectedChildren.map((child) => firstName(child.name));
+  const childName = names.join(", ");
+  const audience =
+    names.length === 1
+      ? `familia de ${names[0]}`
+      : `familias de ${names.join(", ")}`;
 
   return {
     id: generateId(),
     type,
-    childName: isClassroom ? undefined : firstName(child.name),
-    audience: isClassroom
-      ? "toda la sala"
-      : `familia de ${firstName(child.name)}`,
+    childName,
+    audience,
     time: currentTime(),
     authorNote: "publicado por vos",
     text: text.trim(),
