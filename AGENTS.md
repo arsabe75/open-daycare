@@ -37,18 +37,31 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 ## MCPs
 
-- Playwright Screenshots y cualquier cosa relacionada a Playwright tiene que estar en la carpeta `.playwright-mcp`.
-- Context7 usaremos este MCP para traer la documentación actualizada del framework.
+- **Context7** — usaremos este MCP para traer la documentación actualizada del framework.
+- **Supabase** — usaremos este MCP para gestionar el proyecto de Supabase: consultar/esquema, migraciones, logs, políticas RLS, Edge Functions, etc.
+- **Playwright** — Screenshots y cualquier cosa relacionada a Playwright tiene que estar en la carpeta `.playwright-mcp`.
+
+## Supabase
+
+- Cargar siempre la skill `/supabase-postgres-best-practices` antes de crear o modificar tablas, columnas, índices, triggers, funciones, RLS o migraciones.
+- Antes de cambiar el schema, inspeccionar las tablas existentes y revisar logs y recomendaciones de seguridad/rendimiento.
+- Preferir desarrollo local con el Supabase CLI (`supabase`) antes de aplicar cambios en remoto.
+- Para integraciones cliente (Next.js/App Router), usar `@supabase/ssr` y gestionar cookies de sesión correctamente.
 
 ## Reference material
 
 - `references/screenshots/` and `references/pantallas/*.dc.html` are design references only. Do not treat them as application code.
+- `references/docs/` (alias `docs`) — schema de base de datos propuesto: tablas, columnas y referencias. Es solo referencia; aún no está implementado en la base de datos.
 
-## Spec Driven Development - Skills
+## Skills
 
-- /spec Usaremos esta habilidad para crear las especificaciones.
-- /spec-impl Usaremos esta skill para hacer las implementaciones.
-- /verify-spec Verifica, corrige y marca los Acceptance criteria del spec indicado usando el agente `spec-verifier`.
+- **/context7-mcp** — para consultar documentación actualizada de librerías y frameworks vía Context7.
+- **/opencode** — para preguntas sobre OpenCode, su configuración, agentes, MCPs y flujo de trabajo.
+- **/report** — para reportar issues o bugs de OpenCode.
+- **/spec** — para diseñar y redactar especificaciones siguiendo el método spec-driven.
+- **/spec-impl** — para implementar specs aprobadas (crea rama, valida estado "Approved" y ejecuta paso a paso).
+- **/supabase** — para cualquier tarea que involucre Supabase (Auth, Database, Edge Functions, Storage, RLS, etc.).
+- **/supabase-postgres-best-practices** — para diseñar schemas, migraciones, índices, RLS y optimizar queries de Postgres.
 
 ## Agents
 
