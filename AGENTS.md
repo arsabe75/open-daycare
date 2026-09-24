@@ -43,6 +43,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 ## Supabase
 
+- **Toda manipulación de la base de datos debe realizarse mediante migraciones versionadas del Supabase CLI (`supabase migration new` + `supabase db push`).** No aplicar DDL, RLS, funciones, triggers ni modificar esquemas directamente vía MCP `apply_migration`, SQL ad-hoc ni consola SQL, salvo excepciones justificadas y temporales: verificación de estado, limpieza del historial de migraciones o ejecución idempotente de seeds cuando el CLI no lo soporte.
 - Cargar siempre la skill `/supabase-postgres-best-practices` antes de crear o modificar tablas, columnas, índices, triggers, funciones, RLS o migraciones.
 - Antes de cambiar el schema, inspeccionar las tablas existentes y revisar logs y recomendaciones de seguridad/rendimiento.
 - Preferir desarrollo local con el Supabase CLI (`supabase`) antes de aplicar cambios en remoto.

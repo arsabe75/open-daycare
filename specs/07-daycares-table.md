@@ -65,13 +65,15 @@ No hay código TypeScript nuevo ni cambios en `lib/` o `app/`. Los únicos archi
 
 ## Criterios de aceptación
 
-- [ ] `supabase/` existe en el repo con `config.toml`, `migrations/<timestamp>_create_daycares.sql` y `seed.sql`; `supabase/.temp` y `.branches` están gitignoreados.
-- [ ] La tabla `public.daycares` existe en remoto con exactamente `id uuid PK (default gen_random_uuid())`, `name text NOT NULL`, `created_at timestamptz NOT NULL (default now())`.
-- [ ] RLS está activado en `daycares` y no existen políticas; una consulta anónima vía API no devuelve filas.
-- [ ] El historial remoto (`supabase_migrations.schema_migrations`) contiene únicamente la migración `create_daycares`; las 2 de prueba fueron eliminadas.
-- [ ] El seed dejó exactamente 1 fila: id `00000000-0000-0000-0000-000000000001`, name `Guardería Sala Soles`; re-ejecutar el seed no duplica la fila.
-- [ ] `get_advisors` (security y performance) no reporta avisos nuevos atribuibles a `daycares`.
-- [ ] `npm run lint`, `npx tsc --noEmit` y `npm run build` pasan sin errores.
+- [x] `supabase/` existe en el repo con `config.toml`, `migrations/<timestamp>_create_daycares.sql` y `seed.sql`; `supabase/.temp` y `.branches` están gitignoreados.
+  > Nota: la migración se llama `20260924225511_create_daycares.sql` y coincide con el registro remoto en `supabase_migrations.schema_migrations`.
+- [x] La tabla `public.daycares` existe en remoto con exactamente `id uuid PK (default gen_random_uuid())`, `name text NOT NULL`, `created_at timestamptz NOT NULL (default now())`.
+- [x] RLS está activado en `daycares` y no existen políticas; una consulta anónima vía API no devuelve filas.
+- [x] El historial remoto (`supabase_migrations.schema_migrations`) contiene únicamente la migración `create_daycares`; las 2 de prueba fueron eliminadas.
+- [x] El seed dejó exactamente 1 fila: id `00000000-0000-0000-0000-000000000001`, name `Guardería Sala Soles`; re-ejecutar el seed no duplica la fila.
+- [x] `get_advisors` (security y performance) no reporta avisos nuevos atribuibles a `daycares`.
+  > Nota: security reporta un lint `INFO` `rls_enabled_no_policy` sobre `public.daycares`, que es el comportamiento esperado por diseño (RLS activado sin políticas hasta el spec de `users`). Los warnings restantes (`rls_auto_enable()`) son preexistentes y no están relacionados con `daycares`.
+- [x] `npm run lint`, `npx tsc --noEmit` y `npm run build` pasan sin errores.
 
 ## Decisiones
 
