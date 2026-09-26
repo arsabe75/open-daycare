@@ -1,6 +1,6 @@
 # SPEC 08 — Tabla `users`, enums y trigger de perfil
 
-> **Estado:** Aprobado
+> **Estado:** Implementado
 > **Depende de:** SPEC 07 (tabla `daycares` + flujo de migraciones CLI)
 > **Fecha:** 2026-09-26
 > **Objetivo:** Crear en el proyecto remoto `zzlqzrhtkerovwzwcbfp` los enums `user_role`/`user_status`, la tabla `users` con RLS (políticas propias y de `daycares`), el trigger que crea el perfil desde `auth.users`, y un usuario staff de prueba vía seed.
@@ -106,14 +106,14 @@ No hay código TypeScript nuevo; solo cambian archivos dentro de `supabase/`.
 
 ## Criterios de aceptación
 
-- [ ] La migración `<timestamp>_create_users.sql` existe en `supabase/migrations/` y está registrada en el historial remoto.
-- [ ] Existen los enums `public.user_role` (staff/parent/admin) y `public.user_status` (pending/active), y únicamente esos dos nuevos.
-- [ ] `public.users` tiene exactamente las columnas del diccionario con tipos, defaults y `daycare_id NOT NULL` → FK a `daycares`; `id` FK a `auth.users` con `ON DELETE CASCADE`; índice por `daycare_id`; `updated_at` se actualiza solo vía trigger.
-- [ ] RLS activado en `users` con políticas SELECT (mismo daycare) y UPDATE (fila propia); sin INSERT/DELETE. RLS en `daycares` con SELECT (`id = current_daycare_id()`); consultas anónimas no devuelven filas.
-- [ ] El trigger `on_auth_user_created` existe y todo nuevo usuario en `auth.users` genera su perfil en `public.users` leyendo `raw_user_meta_data`.
-- [ ] El seed creó el usuario staff: login `arsabe75@gmail.com` / `Homero&75` existe en `auth.users` + `auth.identities`, y su perfil en `public.users` tiene UUID `00000000-0000-0000-0000-000000000002`, `role='staff'`, `full_name='Arturo Sandoval'`, daycare `00000000-0000-0000-0000-000000000001`; re-ejecutar el seed es idempotente.
-- [ ] `get_advisors` no reporta avisos nuevos por `users`/`daycares` (search_path fijo en las funciones SECURITY DEFINER).
-- [ ] `npm run lint`, `npx tsc --noEmit` y `npm run build` pasan sin errores.
+- [x] La migración `<timestamp>_create_users.sql` existe en `supabase/migrations/` y está registrada en el historial remoto.
+- [x] Existen los enums `public.user_role` (staff/parent/admin) y `public.user_status` (pending/active), y únicamente esos dos nuevos.
+- [x] `public.users` tiene exactamente las columnas del diccionario con tipos, defaults y `daycare_id NOT NULL` → FK a `daycares`; `id` FK a `auth.users` con `ON DELETE CASCADE`; índice por `daycare_id`; `updated_at` se actualiza solo vía trigger.
+- [x] RLS activado en `users` con políticas SELECT (mismo daycare) y UPDATE (fila propia); sin INSERT/DELETE. RLS en `daycares` con SELECT (`id = current_daycare_id()`); consultas anónimas no devuelven filas.
+- [x] El trigger `on_auth_user_created` existe y todo nuevo usuario en `auth.users` genera su perfil en `public.users` leyendo `raw_user_meta_data`.
+- [x] El seed creó el usuario staff: login `arsabe75@gmail.com` / `Homero&75` existe en `auth.users` + `auth.identities`, y su perfil en `public.users` tiene UUID `00000000-0000-0000-0000-000000000002`, `role='staff'`, `full_name='Arturo Sandoval'`, daycare `00000000-0000-0000-0000-000000000001`; re-ejecutar el seed es idempotente.
+- [x] `get_advisors` no reporta avisos nuevos por `users`/`daycares` (search_path fijo en las funciones SECURITY DEFINER).
+- [x] `npm run lint`, `npx tsc --noEmit` y `npm run build` pasan sin errores.
 
 ## Decisiones
 
