@@ -48,5 +48,3 @@ export async function getActiveChildById(id: string): Promise<Child | null> {
   return mapChildToViewModel(data as ChildRow);
 }
 
-// Temporary re-export for the profile page while it transitions to real data.
-export { getChildById } from "@/lib/data/mock-children";
