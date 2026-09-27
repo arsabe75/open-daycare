@@ -24,7 +24,7 @@
 - **Logout real:** `logout()` en `lib/actions/auth.ts` con `supabase.auth.signOut()` + `revalidatePath('/', 'layout')` + `redirect('/login')`. El Link del sidebar pasa a ser un `<form action={logout}>` con el mismo estilo de botón.
 - **Usuario real en el sidebar:**
   - `lib/current-user.ts`: `getCurrentUserProfile()` (server) → `supabase.auth.getUser()` + consulta a `public.users` (`full_name`, `role`) con join a `daycares` (`name`).
-  - `Sidebar`/`SidebarWithDialog` reciben la prop `user: CurrentUserProfile`; el pie reemplaza "Caro Giménez · Maestra · Soles" por el nombre real, la inicial de `full_name` en el avatar y `role · daycare` (p. ej., "Arturo Sandoval · staff · Sala Soles").
+  - `Sidebar`/`SidebarWithDialog` reciben la prop `user: CurrentUserProfile`; el pie reemplaza "Caro Giménez · Maestra · Soles" por el nombre real, la inicial de `full_name` en el avatar y `role · daycare` (p. ej., "Monica Bermudez · staff · Guardería Sala Soles").
   - Las páginas `app/page.tsx`, `app/kids/page.tsx` y `app/kids/[id]/page.tsx` obtienen el perfil y lo pasan como props (`HomeView` lo recibe y reenvía).
 - **Actualización de `AGENTS.md`:** las referencias a `middleware.ts`/`utils/supabase/middleware` se renombran a `proxy`.
 
@@ -61,7 +61,7 @@ Los datos de sesión viven en las cookies `sb-*` que `@supabase/ssr` gestiona; n
 3. Reemplazar `middleware.ts` raíz por `proxy.ts` (`export async function proxy` → `updateSession(request)`, mismo `matcher`).
 4. Crear `lib/actions/auth.ts` con `login` (`signInWithPassword` + `revalidatePath` + `redirect('/')`, devuelve `{ error }` en fallo) y `logout` (`signOut` + `redirect('/login')`).
 5. Modificar `components/auth/auth-submit.tsx`: sin `href` renderiza un `<button type="submit">` con los mismos estilos.
-6. Crear `components/auth/login-form.tsx` (cliente, `useActionState`, error inline) y conectarlo a `app/login/page.tsx`; eliminar el `defaultValue` mock. Prueba manual: login `arsabe75@gmail.com` / `Homero&75` va a `/`; contraseña incorrecta muestra el mensaje sin navegar.
+6. Crear `components/auth/login-form.tsx` (cliente, `useActionState`, error inline) y conectarlo a `app/login/page.tsx`; eliminar el `defaultValue` mock. Prueba manual: login `amonica.bermudez@gmail.com` / `Homero&75` va a `/`; contraseña incorrecta muestra el mensaje sin navegar.
 7. Crear `lib/current-user.ts` con `getCurrentUserProfile()`.
 8. Modificar `components/sidebar.tsx` y `components/sidebar-with-dialog.tsx` (prop `user`, pie real, logout como `<form action={logout}>`).
 9. Modificar `app/page.tsx`, `components/feed/home-view.tsx`, `app/kids/page.tsx` y `app/kids/[id]/page.tsx` para obtener y reenviar el perfil.
@@ -70,16 +70,20 @@ Los datos de sesión viven en las cookies `sb-*` que `@supabase/ssr` gestiona; n
 
 ## Criterios de aceptación
 
-- [ ] Los archivos `middleware.ts` y `utils/supabase/middleware.ts` ya no existen; existen `proxy.ts` (raíz, `export proxy`) y `utils/supabase/proxy.ts`, y el `matcher` se conserva.
-- [ ] Acceder a `/`, `/kids` o `/kids/[id]` sin sesión redirige a `/login`.
-- [ ] `/login` y `/activate-account` son accesibles sin sesión.
-- [ ] El login con `arsabe75@gmail.com` / `Homero&75` crea cookies `sb-*` y redirige a `/`.
-- [ ] Credenciales incorrectas muestran un mensaje de error inline en la tarjeta de `/login` sin cambiar la URL.
-- [ ] Acceder a `/login` o `/activate-account` con sesión activa redirige a `/`.
-- [ ] El pie del sidebar muestra "Arturo Sandoval", el avatar con la inicial "A", y el rol y nombre de guardería desde `public.users`/`public.daycares` (no "Caro Giménez · Maestra · Soles").
-- [ ] El botón de logout en el sidebar destruye la sesión y redirige a `/login`; volver a `/` redirige de nuevo a `/login`.
-- [ ] Ningún código cliente expone la service role ni ninguna clave distinta a la publishable.
-- [ ] `npm run lint`, `npx tsc --noEmit` y `npm run build` pasan sin errores.
+- [x] Los archivos `middleware.ts` y `utils/supabase/middleware.ts` ya no existen; existen `proxy.ts` (raíz, `export proxy`) y `utils/supabase/proxy.ts`, y el `matcher` se conserva.
+- [x] Acceder a `/`, `/kids` o `/kids/[id]` sin sesión redirige a `/login`.
+- [x] `/login` y `/activate-account` son accesibles sin sesión.
+- [x] El login con `amonica.bermudez@gmail.com` / `Homero&75` crea cookies `sb-*` y redirige a `/`.
+  > Verificado con Playwright: se creó `sb-zzlqzrhtkerovwzwcbfp-auth-token` y se redirigió a `/`.
+- [x] Credenciales incorrectas muestran un mensaje de error inline en la tarjeta de `/login` sin cambiar la URL.
+- [x] Acceder a `/login` o `/activate-account` con sesión activa redirige a `/`.
+  > Verificado con Playwright: ambas URLs redirigieron a `/` estando autenticado.
+- [x] El pie del sidebar muestra el nombre real, el avatar con la inicial, y el rol y nombre de guardería desde `public.users`/`public.daycares` (no "Caro Giménez · Maestra · Soles").
+  > Verificado con Playwright: se muestra "Monica Bermudez", inicial "M", y "staff · Guardería Sala Soles".
+- [x] El botón de logout en el sidebar destruye la sesión y redirige a `/login`; volver a `/` redirige de nuevo a `/login`.
+  > Verificado con Playwright: tras el logout la cookie `sb-*` desapareció, se redirigió a `/login` y `/` volvió a redirigir a `/login`.
+- [x] Ningún código cliente expone la service role ni ninguna clave distinta a la publishable.
+- [x] `npm run lint`, `npx tsc --noEmit` y `npm run build` pasan sin errores.
 
 ## Decisiones
 
