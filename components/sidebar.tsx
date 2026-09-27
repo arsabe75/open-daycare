@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { logout } from "@/lib/actions/auth";
+import type { CurrentUserProfile } from "@/lib/current-user";
 
 const navItems = [
   { href: "/", label: "Feed" },
@@ -12,11 +14,26 @@ const navItems = [
 interface SidebarProps {
   activeHref?: string;
   onNewPost?: () => void;
+  user?: CurrentUserProfile | null;
 }
 
-export default function Sidebar({ activeHref = "/", onNewPost }: SidebarProps) {
+function getInitials(name: string | undefined): string {
+  if (!name) return "?";
+  return name.trim().charAt(0).toUpperCase();
+}
+
+export default function Sidebar({
+  activeHref = "/",
+  onNewPost,
+  user,
+}: SidebarProps) {
   const isActive = (href: string) =>
     href === "/" ? activeHref === href : activeHref.startsWith(href);
+
+  const displayName = user?.fullName ?? "Invitado";
+  const roleLabel = user?.role ?? "";
+  const daycareLabel = user?.daycareName ?? "";
+  const subtitle = [roleLabel, daycareLabel].filter(Boolean).join(" · ");
 
   return (
     <aside className="w-62 flex-none bg-[#FFFDF9] border-r border-[#ECE0D0] flex flex-col p-6 px-4 sticky top-0 h-screen">
@@ -145,32 +162,36 @@ export default function Sidebar({ activeHref = "/", onNewPost }: SidebarProps) {
       <div className="border-t border-[#ECE0D0] pt-3.5 mt-2.5">
         <div className="flex items-center gap-2.75 px-2 py-1.5">
           <div className="w-9.5 h-9.5 rounded-full bg-[#F2937A] text-white font-display font-semibold text-base flex items-center justify-center flex-none">
-            C
+            {getInitials(user?.fullName)}
           </div>
           <div className="flex-1 min-w-0">
             <div className="font-extrabold text-sm text-[#3F362E]">
-              Caro Giménez
+              {displayName}
             </div>
-            <div className="text-xs text-[#A89A8B]">Maestra · Soles</div>
+            {subtitle && (
+              <div className="text-xs text-[#A89A8B]">{subtitle}</div>
+            )}
           </div>
-          <Link
-            href="/login"
-            title="Cerrar sesión"
-            className="flex-none w-8 h-8 rounded-[10px] bg-[#F6ECDF] text-[#94887B] flex items-center justify-center"
-          >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+          <form action={logout}>
+            <button
+              type="submit"
+              title="Cerrar sesión"
+              className="flex-none w-8 h-8 rounded-[10px] bg-[#F6ECDF] text-[#94887B] flex items-center justify-center cursor-pointer"
             >
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" />
-            </svg>
-          </Link>
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" />
+              </svg>
+            </button>
+          </form>
         </div>
       </div>
     </aside>
