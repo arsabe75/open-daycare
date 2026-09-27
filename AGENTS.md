@@ -47,7 +47,33 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - Cargar siempre la skill `/supabase-postgres-best-practices` antes de crear o modificar tablas, columnas, índices, triggers, funciones, RLS o migraciones.
 - Antes de cambiar el schema, inspeccionar las tablas existentes y revisar logs y recomendaciones de seguridad/rendimiento.
 - Preferir desarrollo local con el Supabase CLI (`supabase`) antes de aplicar cambios en remoto.
-- Para integraciones cliente (Next.js/App Router), usar `@supabase/ssr` y gestionar cookies de sesión correctamente.
+
+### Cliente de aplicación Next.js
+
+La aplicación usa los paquetes oficiales de Supabase para Next.js/App Router:
+
+- `@supabase/ssr` — cliente SSR seguro con gestión de cookies.
+- `@supabase/supabase-js` — SDK base de Supabase.
+
+Configuración:
+
+- Variables de entorno en `.env.local`:
+  - `NEXT_PUBLIC_SUPABASE_URL`
+  - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+
+Helpers disponibles en `utils/supabase/`:
+
+- `utils/supabase/server.ts` — `createClient(cookieStore)` para Server Components.
+  - Obtener `cookieStore` con `await cookies()` desde `next/headers`.
+- `utils/supabase/client.ts` — `createClient()` para Client Components.
+- `utils/supabase/middleware.ts` — helper para refrescar sesiones en middleware.
+
+Middleware raíz `middleware.ts` invoca el helper de `utils/supabase/middleware` para mantener las sesiones actualizadas en cada petición.
+
+Reglas:
+
+- Usar siempre los helpers de `utils/supabase/` en lugar de crear clientes directamente con `@supabase/supabase-js`.
+- No exponer la service role key ni claves privadas en el cliente.
 
 ## Reference material
 
