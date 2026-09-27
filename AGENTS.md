@@ -66,9 +66,9 @@ Helpers disponibles en `utils/supabase/`:
 - `utils/supabase/server.ts` — `createClient(cookieStore)` para Server Components.
   - Obtener `cookieStore` con `await cookies()` desde `next/headers`.
 - `utils/supabase/client.ts` — `createClient()` para Client Components.
-- `utils/supabase/middleware.ts` — helper para refrescar sesiones en middleware.
+- `utils/supabase/proxy.ts` — helper para refrescar sesiones en proxy.
 
-Middleware raíz `middleware.ts` invoca el helper de `utils/supabase/middleware` para mantener las sesiones actualizadas en cada petición.
+Proxy raíz `proxy.ts` invoca el helper de `utils/supabase/proxy` para mantener las sesiones actualizadas en cada petición.
 
 Reglas:
 

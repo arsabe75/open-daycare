@@ -6,12 +6,14 @@ import AllergyAlert from "@/components/kids/profile/allergy-alert";
 import ChildDetails from "@/components/kids/profile/child-details";
 import LinkedParents from "@/components/kids/profile/linked-parents";
 import { getChildById } from "@/lib/data/children";
+import { getCurrentUserProfile } from "@/lib/current-user";
 
 export default async function KidProfilePage({
   params,
 }: PageProps<"/kids/[id]">) {
   const { id } = await params;
   const child = getChildById(id);
+  const user = await getCurrentUserProfile();
 
   if (!child) {
     notFound();
@@ -19,7 +21,7 @@ export default async function KidProfilePage({
 
   return (
     <div className="flex min-h-screen bg-[#F6ECDF]">
-      <SidebarWithDialog activeHref="/kids" />
+      <SidebarWithDialog activeHref="/kids" user={user} />
       <main className="flex-1 min-w-0 h-screen overflow-y-auto">
         <div className="max-w-205 w-full mx-auto px-10 pt-8.5 pb-20">
           <Link

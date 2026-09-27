@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { Post } from "@/lib/data/posts";
+import type { CurrentUserProfile } from "@/lib/current-user";
 import Composer from "@/components/feed/composer";
 import HomePostCard from "@/components/feed/post-card";
 import NewPostDialog from "@/components/feed/new-post-dialog";
@@ -9,9 +10,10 @@ import Sidebar from "@/components/sidebar";
 
 interface HomeViewProps {
   initialPosts: Post[];
+  user?: CurrentUserProfile | null;
 }
 
-export default function HomeView({ initialPosts }: HomeViewProps) {
+export default function HomeView({ initialPosts, user }: HomeViewProps) {
   const [posts, setPosts] = useState<Post[]>(initialPosts);
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -19,9 +21,15 @@ export default function HomeView({ initialPosts }: HomeViewProps) {
     setPosts((prev) => [post, ...prev]);
   }
 
+  const firstName = user?.fullName?.split(" ")[0] ?? "Invitado";
+
   return (
     <div className="flex min-h-screen bg-[#F6ECDF]">
-      <Sidebar activeHref="/" onNewPost={() => setDialogOpen(true)} />
+      <Sidebar
+        activeHref="/"
+        onNewPost={() => setDialogOpen(true)}
+        user={user}
+      />
       <main className="flex-1 min-w-0 h-screen overflow-y-auto">
         <div className="max-w-190 w-full mx-auto px-10 pt-8.5 pb-20">
           <div className="mb-6">
@@ -29,7 +37,7 @@ export default function HomeView({ initialPosts }: HomeViewProps) {
               GUARDERÍA · SALA SOLES
             </div>
             <h1 className="font-display font-semibold text-[30px] text-[#3F362E] m-0">
-              Buenas, Caro
+              Buenas, {firstName}
             </h1>
             <p className="mt-1.25 text-[#94887B] text-[14.5px]">
               12 niños · martes 17 jun

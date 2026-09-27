@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import AuthField from "@/components/auth/auth-field";
-import AuthSubmit from "@/components/auth/auth-submit";
+import LoginForm from "@/components/auth/login-form";
 
 export const metadata: Metadata = {
   title: "Iniciar sesión · OpenDayCare",
@@ -75,41 +73,7 @@ export default function LoginPage() {
             Ingresá para ver el día de hoy.
           </p>
 
-          <AuthField
-            label="EMAIL"
-            name="email"
-            type="email"
-            defaultValue="caro@opendaycare.com"
-            className="mb-[18px]"
-          />
-
-          <AuthField
-            label="CONTRASEÑA"
-            name="password"
-            type="password"
-            placeholder="••••••••"
-          />
-
-          <div className="text-right mt-2.5 mb-5">
-            <Link
-              href="/forgot-password"
-              className="text-[#C5503A] text-[13.5px] font-bold"
-            >
-              ¿Olvidaste tu contraseña?
-            </Link>
-          </div>
-
-          <AuthSubmit href="/">Iniciar sesión</AuthSubmit>
-
-          <p className="text-center mt-6 text-[#94887B] text-[14.5px]">
-            ¿Te invitó la guardería?{" "}
-            <Link
-              href="/activate-account"
-              className="text-[#C5503A] font-extrabold"
-            >
-              Activá tu cuenta
-            </Link>
-          </p>
+          <LoginForm />
         </div>
       </div>
     </div>
