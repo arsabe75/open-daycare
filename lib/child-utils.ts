@@ -1,4 +1,4 @@
-import { Child, Avatar } from "@/lib/data/children";
+import { Child, Avatar } from "@/lib/child-types";
 
 const MONTHS = [
   "ene",
