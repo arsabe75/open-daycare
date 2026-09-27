@@ -25,9 +25,3 @@ export async function getRooms(): Promise<Room[]> {
   return data ?? [];
 }
 
-// TODO: remove after pages are updated to call getRooms().
-export const rooms: Room[] = [
-  { id: "soles", name: "Soles" },
-  { id: "lunas", name: "Lunas" },
-  { id: "arcoiris", name: "Arcoiris" },
-];

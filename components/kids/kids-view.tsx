@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { Child } from "@/lib/child-types";
-import { Room } from "@/lib/data/rooms";
+import { useMemo, useState } from "react";
+import type { Child } from "@/lib/child-types";
+import type { Room } from "@/lib/data/rooms";
 import SearchBox from "./search-box";
 import ChildCard from "./child-card";
 import ChildFormDialog from "./child-form-dialog";
@@ -13,11 +13,27 @@ interface KidsViewProps {
 }
 
 export default function KidsView({ initialChildren, rooms }: KidsViewProps) {
-  const [children] = useState<Child[]>(initialChildren);
+  const [search, setSearch] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogKey, setDialogKey] = useState(0);
 
-  const count = children.length;
+  const query = search.trim().toLowerCase();
+
+  const filteredChildren = useMemo(() => {
+    if (!query) return initialChildren;
+    return initialChildren.filter((child) =>
+      child.name.toLowerCase().includes(query)
+    );
+  }, [initialChildren, query]);
+
+  const groups = useMemo(() => {
+    return rooms
+      .map((room) => ({
+        room,
+        children: filteredChildren.filter((child) => child.roomId === room.id),
+      }))
+      .filter((group) => !query || group.children.length > 0);
+  }, [rooms, filteredChildren, query]);
 
   const openDialog = () => {
     setDialogKey((prev) => prev + 1);
@@ -58,20 +74,34 @@ export default function KidsView({ initialChildren, rooms }: KidsViewProps) {
         </div>
 
         <div className="mb-5.5">
-          <SearchBox />
+          <SearchBox value={search} onChange={setSearch} />
         </div>
 
-        <div className="flex items-center gap-3 mb-3.5">
-          <span className="text-[12.5px] font-extrabold tracking-[0.8px] text-[#3F362E]">
-            SALA SOLES
-          </span>
-          <span className="text-[13px] text-[#A89A8B]">{count} niños</span>
-          <span className="flex-1 h-px bg-[#E7DAC8]" />
-        </div>
+        <div className="flex flex-col gap-6">
+          {groups.map(({ room, children }) => (
+            <section key={room.id}>
+              <div className="flex items-center gap-3 mb-3.5">
+                <span className="text-[12.5px] font-extrabold tracking-[0.8px] text-[#3F362E]">
+                  SALA {room.name.toUpperCase()}
+                </span>
+                <span className="text-[13px] text-[#A89A8B]">
+                  {children.length} {children.length === 1 ? "niño" : "niños"}
+                </span>
+                <span className="flex-1 h-px bg-[#E7DAC8]" />
+              </div>
 
-        <div className="grid grid-cols-2 gap-3.5">
-          {children.map((child) => (
-            <ChildCard key={child.id} child={child} />
+              {children.length > 0 ? (
+                <div className="grid grid-cols-2 gap-3.5">
+                  {children.map((child) => (
+                    <ChildCard key={child.id} child={child} />
+                  ))}
+                </div>
+              ) : (
+                <p className="text-[14px] text-[#A89A8B] py-2">
+                  No hay niños en esta sala.
+                </p>
+              )}
+            </section>
           ))}
         </div>
       </div>
