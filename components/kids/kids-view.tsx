@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Child } from "@/lib/data/children";
+import { Child } from "@/lib/child-types";
 import { Room } from "@/lib/data/rooms";
 import SearchBox from "./search-box";
 import ChildCard from "./child-card";
-import AddChildDialog from "./add-child/add-child-dialog";
+import ChildFormDialog from "./child-form-dialog";
 
 interface KidsViewProps {
   initialChildren: Child[];
@@ -13,15 +13,11 @@ interface KidsViewProps {
 }
 
 export default function KidsView({ initialChildren, rooms }: KidsViewProps) {
-  const [children, setChildren] = useState<Child[]>(initialChildren);
+  const [children] = useState<Child[]>(initialChildren);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogKey, setDialogKey] = useState(0);
 
   const count = children.length;
-
-  const handleAddChild = (newChild: Child) => {
-    setChildren((prev) => [...prev, newChild]);
-  };
 
   const openDialog = () => {
     setDialogKey((prev) => prev + 1);
@@ -80,13 +76,11 @@ export default function KidsView({ initialChildren, rooms }: KidsViewProps) {
         </div>
       </div>
 
-      <AddChildDialog
+      <ChildFormDialog
         key={dialogKey}
         open={dialogOpen}
         onClose={() => setDialogOpen(false)}
-        onAdd={handleAddChild}
         rooms={rooms}
-        existingChildren={children}
       />
     </main>
   );

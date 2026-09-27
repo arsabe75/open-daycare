@@ -19,11 +19,15 @@ export interface Child {
   id: string;
   name: string;
   age: number;
+  roomId: string;
   room: string;
   avatar: Avatar;
   allergyBadge?: string;
   allergyNotes?: string;
+  allergyTags?: string[];
+  medicalNotes?: string;
   birthDate: string;
+  birthDateIso?: string;
   admission: string;
   linkedParents: LinkedParent[];
 }

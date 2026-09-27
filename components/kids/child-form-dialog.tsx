@@ -1,18 +1,20 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Child } from "@/lib/data/children";
-import { Room } from "@/lib/data/rooms";
-import { buildChild, isValidDate } from "@/lib/child-utils";
-import MaskedDateInput from "./masked-date-input";
-import RoomSelect from "./room-select";
+import { useActionState } from "react";
+import type { Child } from "@/lib/child-types";
+import type { Room } from "@/lib/data/rooms";
+import { ALLERGY_OPTIONS, type AllergyTag } from "@/lib/allergies";
+import { createChild, updateChild } from "@/lib/actions/children";
+import { isValidDate } from "@/lib/child-utils";
+import MaskedDateInput from "./add-child/masked-date-input";
+import RoomSelect from "./add-child/room-select";
 
-interface AddChildDialogProps {
+interface ChildFormDialogProps {
   open: boolean;
   onClose: () => void;
-  onAdd: (child: Child) => void;
   rooms: Room[];
-  existingChildren: Child[];
+  child?: Child;
 }
 
 interface FormErrors {
@@ -21,18 +23,31 @@ interface FormErrors {
   roomId?: string;
 }
 
-export default function AddChildDialog({
+function displayDateFromIso(iso: string | undefined): string {
+  if (!iso) return "";
+  const [year, month, day] = iso.split("-");
+  return `${day}/${month}/${year}`;
+}
+
+export default function ChildFormDialog({
   open,
   onClose,
-  onAdd,
   rooms,
-  existingChildren,
-}: AddChildDialogProps) {
-  const [fullName, setFullName] = useState("");
-  const [birthDate, setBirthDate] = useState("");
-  const [roomId, setRoomId] = useState(rooms[0]?.id ?? "");
-  const [allergies, setAllergies] = useState("");
-  const [medicalNotes, setMedicalNotes] = useState("");
+  child,
+}: ChildFormDialogProps) {
+  const isEdit = Boolean(child);
+
+  const [fullName, setFullName] = useState(child?.name ?? "");
+  const [birthDate, setBirthDate] = useState(
+    displayDateFromIso(child?.birthDateIso)
+  );
+  const [roomId, setRoomId] = useState(child?.roomId ?? rooms[0]?.id ?? "");
+  const [medicalNotes, setMedicalNotes] = useState(child?.medicalNotes ?? "");
+  const [selectedAllergies, setSelectedAllergies] = useState<AllergyTag[]>(
+    (child?.allergyTags?.filter((tag): tag is AllergyTag =>
+      ALLERGY_OPTIONS.some((option) => option.value === tag)
+    ) as AllergyTag[]) ?? []
+  );
   const [errors, setErrors] = useState<FormErrors>({});
 
   const firstInputRef = useRef<HTMLInputElement>(null);
@@ -61,6 +76,32 @@ export default function AddChildDialog({
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [open, onClose]);
 
+  const [state, formAction, isPending] = useActionState(async () => {
+    const input = {
+      fullName,
+      birthDate,
+      roomId,
+      allergies: selectedAllergies.join(","),
+      medicalNotes,
+    };
+
+    const result = isEdit
+      ? await updateChild(child!.id, input)
+      : await createChild(input);
+
+    if (result.error) {
+      return { error: result.error, success: false };
+    }
+
+    return { error: "", success: true };
+  }, { error: "", success: false });
+
+  useEffect(() => {
+    if (state.success) {
+      onClose();
+    }
+  }, [state.success, onClose]);
+
   const validate = (): FormErrors => {
     const nextErrors: FormErrors = {};
 
@@ -70,7 +111,10 @@ export default function AddChildDialog({
 
     if (birthDate.trim().length === 0) {
       nextErrors.birthDate = "La fecha de nacimiento es obligatoria.";
-    } else if (!/^\d{2}\/\d{2}\/\d{4}$/.test(birthDate) || !isValidDate(birthDate)) {
+    } else if (
+      !/^\d{2}\/\d{2}\/\d{4}$/.test(birthDate) ||
+      !isValidDate(birthDate)
+    ) {
       nextErrors.birthDate = "Ingresá una fecha válida (DD/MM/AAAA).";
     }
 
@@ -90,21 +134,14 @@ export default function AddChildDialog({
       return;
     }
 
-    const roomName = rooms.find((room) => room.id === roomId)?.name ?? "";
-    const newChild = buildChild(
-      {
-        fullName,
-        birthDate,
-        roomId,
-        allergies,
-        medicalNotes,
-      },
-      roomName,
-      existingChildren
-    );
+    setErrors({});
+    formAction();
+  };
 
-    onAdd(newChild);
-    onClose();
+  const toggleAllergy = (tag: AllergyTag) => {
+    setSelectedAllergies((prev) =>
+      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
+    );
   };
 
   const handleBackdropClick = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -131,11 +168,12 @@ export default function AddChildDialog({
               Cancelar
             </button>
             <span className="font-display font-semibold text-[18px] text-[#3F362E]">
-              Agregar niño
+              {isEdit ? "Editar niño" : "Agregar niño"}
             </span>
             <button
               type="submit"
-              className="text-[15px] font-extrabold text-[#D9583C] hover:opacity-80"
+              disabled={isPending}
+              className="text-[15px] font-extrabold text-[#D9583C] hover:opacity-80 disabled:opacity-50"
             >
               Guardar
             </button>
@@ -199,15 +237,27 @@ export default function AddChildDialog({
 
             <div className="mb-[18px]">
               <label className="block text-[12px] font-extrabold tracking-[0.7px] text-[#94887B] mb-2">
-                ALERGIAS (ETIQUETAS)
+                ALERGIAS
               </label>
-              <input
-                type="text"
-                placeholder="Ej. Maní, Lactosa"
-                value={allergies}
-                onChange={(e) => setAllergies(e.target.value)}
-                className="w-full px-4 py-[13px] rounded-[14px] border-[1.5px] border-[#EADFD0] bg-white text-[15px] text-[#3F362E] placeholder:text-[#B6A99B] focus:outline-none"
-              />
+              <div className="flex flex-wrap gap-2">
+                {ALLERGY_OPTIONS.map((option) => {
+                  const selected = selectedAllergies.includes(option.value);
+                  return (
+                    <button
+                      key={option.value}
+                      type="button"
+                      onClick={() => toggleAllergy(option.value)}
+                      className={`rounded-full px-3.5 py-1.5 text-[13px] font-bold border-[1.5px] transition-colors ${
+                        selected
+                          ? "bg-[#3F362E] border-[#3F362E] text-white"
+                          : "bg-white border-[#ECE0D0] text-[#6E6359]"
+                      }`}
+                    >
+                      {option.label}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
             <div>
@@ -221,6 +271,12 @@ export default function AddChildDialog({
                 className="w-full min-h-[90px] resize-y px-4 py-[13px] rounded-[14px] border-[1.5px] border-[#EADFD0] bg-white text-[15px] text-[#3F362E] placeholder:text-[#B6A99B] leading-relaxed focus:outline-none"
               />
             </div>
+
+            {state.error && (
+              <p className="mt-4 text-[13px] font-semibold text-[#D9583C]">
+                {state.error}
+              </p>
+            )}
           </div>
         </form>
       </div>

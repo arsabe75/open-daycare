@@ -119,15 +119,23 @@ export function mapChildToViewModel(row: ChildRow): Child {
   const enrolledAt = parseIsoDate(row.enrolled_at);
   const tags = row.allergy_tags ?? [];
 
+  const isoYear = birthDate.getFullYear();
+  const isoMonth = String(birthDate.getMonth() + 1).padStart(2, "0");
+  const isoDay = String(birthDate.getDate()).padStart(2, "0");
+
   const child: Child = {
     id: row.id,
     name: row.full_name,
     age: calculateAge(birthDate),
+    roomId: row.room_id,
     room: row.rooms?.name ?? "",
     avatar: deriveAvatar(row.full_name, stableHashIndex(row.id, AVATAR_PALETTE.length)),
     birthDate: formatBirthDate(birthDate),
+    birthDateIso: `${isoYear}-${isoMonth}-${isoDay}`,
     admission: formatAdmission(enrolledAt),
     linkedParents: [],
+    allergyTags: tags,
+    medicalNotes: row.medical_notes ?? undefined,
   };
 
   if (tags.length > 0) {
@@ -192,6 +200,7 @@ export function buildChild(
     id: nextNumericId(existingChildren),
     name,
     age: calculateAge(birthDateObj),
+    roomId: input.roomId,
     room: roomName,
     avatar: deriveAvatar(name, existingChildren.length),
     birthDate: formatBirthDate(birthDateObj),
