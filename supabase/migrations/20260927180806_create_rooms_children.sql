@@ -51,24 +51,28 @@ create trigger children_updated_at
   for each row execute function public.set_updated_at();
 
 -- Helper to read the authenticated user's role without triggering RLS recursion.
-create or replace function public.current_user_role()
+-- Placed in the private schema so it is not exposed via PostgREST.
+create or replace function private.current_user_role()
 returns public.user_role
 language sql
 stable
 security definer
-set search_path = public
+set search_path = ''
 as $$
-  select role from public.users where id = auth.uid()
+  select role from public.users where id = (select auth.uid())
 $$;
 
-comment on function public.current_user_role() is 'Returns the role of the current authenticated user; used by RLS policies.';
+comment on function private.current_user_role() is 'Returns the role of the current authenticated user; used by RLS policies.';
+
+grant execute on function private.current_user_role() to authenticated;
+revoke execute on function private.current_user_role() from public;
 
 -- Rooms are read-only from the client; managed via seed/CLI.
 create policy "rooms_select_own"
   on public.rooms
   for select
   to authenticated
-  using (daycare_id = public.current_daycare_id());
+  using (daycare_id = private.current_daycare_id());
 
 -- Children can only be managed by staff/admin of the same daycare.
 create policy "children_select_staff"
@@ -76,12 +80,12 @@ create policy "children_select_staff"
   for select
   to authenticated
   using (
-    public.current_user_role() in ('staff', 'admin')
+    private.current_user_role() in ('staff', 'admin')
     and exists (
       select 1
       from public.rooms r
       where r.id = public.children.room_id
-        and r.daycare_id = public.current_daycare_id()
+        and r.daycare_id = private.current_daycare_id()
     )
   );
 
@@ -90,12 +94,12 @@ create policy "children_insert_staff"
   for insert
   to authenticated
   with check (
-    public.current_user_role() in ('staff', 'admin')
+    private.current_user_role() in ('staff', 'admin')
     and exists (
       select 1
       from public.rooms r
       where r.id = public.children.room_id
-        and r.daycare_id = public.current_daycare_id()
+        and r.daycare_id = private.current_daycare_id()
     )
   );
 
@@ -104,20 +108,20 @@ create policy "children_update_staff"
   for update
   to authenticated
   using (
-    public.current_user_role() in ('staff', 'admin')
+    private.current_user_role() in ('staff', 'admin')
     and exists (
       select 1
       from public.rooms r
       where r.id = public.children.room_id
-        and r.daycare_id = public.current_daycare_id()
+        and r.daycare_id = private.current_daycare_id()
     )
   )
   with check (
-    public.current_user_role() in ('staff', 'admin')
+    private.current_user_role() in ('staff', 'admin')
     and exists (
       select 1
       from public.rooms r
       where r.id = public.children.room_id
-        and r.daycare_id = public.current_daycare_id()
+        and r.daycare_id = private.current_daycare_id()
     )
   );
