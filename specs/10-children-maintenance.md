@@ -1,6 +1,6 @@
 # SPEC 10 — Tablas `rooms` y `children` + mantenimiento real en `/kids`
 
-> **Estado:** Aprobado
+> **Estado:** Implementado
 > **Depende de:** SPEC 02 (UI /kids y perfil), SPEC 04 (diálogo de alta), SPEC 07 (`daycares` + flujo CLI), SPEC 08 (`users`, RLS, `current_daycare_id()`), SPEC 09 (auth real y rutas protegidas)
 > **Fecha:** 2026-09-27
 > **Objetivo:** Crear las tablas `rooms` y `children` (enum `child_status`, RLS solo staff, seed de 3 salas sin niños) y reemplazar los mocks de `/kids` por datos reales con alta, edición, perfil y archivado.
@@ -32,7 +32,7 @@
   - `kids-view.tsx`: recibe rooms y children del server; **agrupa por sala** (encabezado `SALA <NOMBRE> · X niños` en orden del seed, salas vacías con mensaje sutil); el alta/edición ya no muta estado local — la lista se refresca por revalidación.
   - `search-box.tsx`: controlado (sin `readOnly`), filtra client-side por nombre dentro de la lista cargada; mientras se busca, solo se muestran los grupos con coincidencias.
   - `app/kids/[id]/page.tsx`: consulta real por UUID; inexistente o archivado → `notFound()`. Botón **Editar** abre el `ChildFormDialog` en modo edición; nuevo botón **Archivar** con diálogo de confirmación → `archiveChild` → `redirect('/kids')`.
-  - `linked-parents.tsx`: con `linkedParents: []` renderiza estado vacío "Sin tutores vinculados" y oculta el disparador del diálogo de vincular (el componente de SPEC 05 no se borra).
+  - `linked-parents.tsx`: con `linkedParents: []` renderiza estado vacío "Sin tutores vinculados" y conserva el botón "Vincular otro padre" con el modal de SPEC 05 (el guardado real queda para el spec de `parent_children`).
   - `child-card.tsx`, `child-details.tsx`, `allergy-alert.tsx`: ajustes menores al view-model.
   - Feed: `new-post-dialog.tsx` y `post-utils.ts` cambian su import a `lib/data/mock-children.ts`.
 
@@ -114,18 +114,18 @@ export interface Child {
 
 ## Criterios de aceptación
 
-- [ ] La migración `create_rooms_children` existe en `supabase/migrations/` y en el historial remoto; enum `child_status` creado.
-- [ ] `public.rooms` y `public.children` tienen exactamente las columnas del diccionario, con defaults (`enrolled_at` CURRENT_DATE, `photo_consent` true, `allergy_tags` `'{}'`, `status` 'active'), FKs `on delete restrict`, índices por FK y trigger `updated_at` en `children`.
-- [ ] RLS activado en ambas tablas: SELECT de `rooms` por daycare propio; SELECT/INSERT/UPDATE de `children` solo staff/admin del daycare; sin DELETE; consulta anónima → 0 filas; un usuario `parent` no lee `children`.
-- [ ] El seed dejó exactamente 3 salas (Soles, Lunas, Arcoíris, UUIDs `…011/…012/…013`) y 0 niños; re-ejecutarlo no duplica.
-- [ ] `/kids` lista niños reales agrupados por sala con encabezado y conteo; las 3 salas se muestran aunque estén vacías; el buscador filtra por nombre en la lista cargada.
-- [ ] Alta desde el diálogo persiste en `public.children` (con `allergy_tags` del catálogo en inglés), sobrevive recargar la página y el niño aparece en el grupo de su sala.
-- [ ] El perfil `/kids/[id]` muestra datos reales (edad y fechas derivadas, badge de alergia traducido a ES); Editar abre el diálogo precargado y guardar actualiza la DB; Archivar pide confirmación, pone `status='archived'` y redirige a `/kids`.
-- [ ] Un niño archivado desaparece del listado y su perfil responde 404; la fila sigue en la DB.
-- [ ] La sección de tutores muestra el estado vacío "Sin tutores vinculados" sin disparador de vinculación.
-- [ ] El feed (`/`) sigue funcionando con sus mocks (`lib/data/mock-children.ts`); ningún componente de `/kids` importa datos mock.
-- [ ] `get_advisors` security/performance sin avisos nuevos por `rooms`/`children`.
-- [ ] `npm run lint`, `npx tsc --noEmit` y `npm run build` pasan sin errores.
+- [x] La migración `create_rooms_children` existe en `supabase/migrations/` y en el historial remoto; enum `child_status` creado.
+- [x] `public.rooms` y `public.children` tienen exactamente las columnas del diccionario, con defaults (`enrolled_at` CURRENT_DATE, `photo_consent` true, `allergy_tags` `'{}'`, `status` 'active'), FKs `on delete restrict`, índices por FK y trigger `updated_at` en `children`.
+- [x] RLS activado en ambas tablas: SELECT de `rooms` por daycare propio; SELECT/INSERT/UPDATE de `children` solo staff/admin del daycare; sin DELETE; consulta anónima → 0 filas; un usuario `parent` no lee `children`.
+- [x] El seed dejó exactamente 3 salas (Soles, Lunas, Arcoíris, UUIDs `…011/…012/…013`) y 0 niños; re-ejecutarlo no duplica.
+- [x] `/kids` lista niños reales agrupados por sala con encabezado y conteo; las 3 salas se muestran aunque estén vacías; el buscador filtra por nombre en la lista cargada.
+- [x] Alta desde el diálogo persiste en `public.children` (con `allergy_tags` del catálogo en inglés), sobrevive recargar la página y el niño aparece en el grupo de su sala.
+- [x] El perfil `/kids/[id]` muestra datos reales (edad y fechas derivadas, badge de alergia traducido a ES); Editar abre el diálogo precargado y guardar actualiza la DB; Archivar pide confirmación, pone `status='archived'` y redirige a `/kids`.
+- [x] Un niño archivado desaparece del listado y su perfil responde 404; la fila sigue en la DB.
+- [x] La sección de tutores muestra el estado vacío "Sin tutores vinculados" junto con el botón "Vincular otro padre"; al hacer clic se abre el modal de SPEC 05 (el guardado real queda para el spec de `parent_children`).
+- [x] El feed (`/`) sigue funcionando con sus mocks (`lib/data/mock-children.ts`); ningún componente de `/kids` importa datos mock.
+- [x] `get_advisors` security/performance sin avisos nuevos por `rooms`/`children`.
+- [x] `npm run lint`, `npx tsc --noEmit` y `npm run build` pasan sin errores.
 
 ## Decisiones
 

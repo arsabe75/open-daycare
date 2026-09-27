@@ -50,9 +50,9 @@ export default async function KidProfilePage({
 
           <div className="flex gap-6.5 items-start flex-wrap">
             <div className="flex-1 min-w-75 flex flex-col gap-4.5">
-              <div className="flex items-center gap-4.5">
+              <div className="flex items-center gap-4.5 flex-wrap">
                 <ChildAvatar avatar={child.avatar} size="profile" />
-                <div className="flex-1">
+                <div className="flex-1 min-w-0">
                   <h1 className="font-display font-semibold text-[28px] text-[#3F362E] m-0">
                     {child.name}
                   </h1>

@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { useActionState } from "react";
+import { useActionState, useEffect, useRef, useState, useTransition } from "react";
 import type { Child } from "@/lib/child-types";
 import type { Room } from "@/lib/data/rooms";
 import { ALLERGY_OPTIONS, type AllergyTag } from "@/lib/allergies";
@@ -76,7 +75,7 @@ export default function ChildFormDialog({
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [open, onClose]);
 
-  const [state, formAction, isPending] = useActionState(async () => {
+  const [state, formAction] = useActionState(async () => {
     const input = {
       fullName,
       birthDate,
@@ -95,6 +94,8 @@ export default function ChildFormDialog({
 
     return { error: "", success: true };
   }, { error: "", success: false });
+
+  const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
     if (state.success) {
@@ -135,7 +136,9 @@ export default function ChildFormDialog({
     }
 
     setErrors({});
-    formAction();
+    startTransition(() => {
+      formAction();
+    });
   };
 
   const toggleAllergy = (tag: AllergyTag) => {
