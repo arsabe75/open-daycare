@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { Child } from "@/lib/data/children";
-import { children } from "@/lib/data/children";
+import type { Child } from "@/lib/child-types";
+import { children } from "@/lib/data/mock-children";
 import type { Post, PostType } from "@/lib/data/posts";
 import { POST_TYPE_META, POST_TYPE_ORDER } from "@/lib/post-types";
 import { buildPost } from "@/lib/post-utils";

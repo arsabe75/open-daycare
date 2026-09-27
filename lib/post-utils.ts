@@ -1,4 +1,4 @@
-import type { Child } from "@/lib/data/children";
+import type { Child } from "@/lib/child-types";
 import type { Post, PostType } from "@/lib/data/posts";
 
 function firstName(fullName: string): string {

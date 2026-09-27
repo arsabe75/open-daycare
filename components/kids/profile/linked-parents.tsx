@@ -4,7 +4,12 @@ import { useState } from "react";
 import ChildAvatar from "../child-avatar";
 import LinkParentDialog from "./link-parent-dialog";
 import { buildLinkedParent } from "@/lib/parent-utils";
-import type { Child, LinkedParent, ParentRelation, ParentStatus } from "@/lib/data/children";
+import type {
+  Child,
+  LinkedParent,
+  ParentRelation,
+  ParentStatus,
+} from "@/lib/child-types";
 
 interface LinkedParentsProps {
   child: Child;
@@ -31,7 +36,11 @@ function ParentRow({ parent }: { parent: LinkedParent }) {
 
   return (
     <div className="flex items-center gap-3">
-      <ChildAvatar avatar={parent.avatar} size="card" className="w-10 h-10 text-[16px]" />
+      <ChildAvatar
+        avatar={parent.avatar}
+        size="card"
+        className="w-10 h-10 text-[16px]"
+      />
       <div className="flex-1 min-w-0">
         <div className="font-extrabold text-[14.5px] text-[#3F362E]">
           {parent.name}
@@ -67,9 +76,15 @@ export default function LinkedParents({ child }: LinkedParentsProps) {
           PADRES VINCULADOS
         </div>
         <div className="flex flex-col gap-3.5">
-          {linkedParents.map((parent) => (
-            <ParentRow key={parent.id} parent={parent} />
-          ))}
+          {linkedParents.length > 0 ? (
+            linkedParents.map((parent) => (
+              <ParentRow key={parent.id} parent={parent} />
+            ))
+          ) : (
+            <p className="text-[14px] text-[#A89A8B] py-1">
+              Sin tutores vinculados.
+            </p>
+          )}
           <button
             type="button"
             onClick={() => setIsDialogOpen(true)}

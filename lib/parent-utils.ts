@@ -1,5 +1,5 @@
 import { deriveAvatar } from "@/lib/child-utils";
-import type { LinkedParent, ParentRelation } from "@/lib/data/children";
+import type { LinkedParent, ParentRelation } from "@/lib/child-types";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const INVITE_CODE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
