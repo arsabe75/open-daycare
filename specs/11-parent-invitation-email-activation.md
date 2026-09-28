@@ -1,6 +1,6 @@
 # SPEC 11 — Invitación real de padres: correo vía Resend y activación con código
 
-> **Estado:** Aprobado
+> **Estado:** Implementado
 > **Depende de:** SPEC 05 (diálogo "Vincular padre"), SPEC 08 (`users` + trigger `handle_new_user`), SPEC 09 (auth real y proxy), SPEC 10 (`rooms`/`children`, `current_user_role()`)
 > **Fecha:** 2026-09-28
 > **Objetivo:** Persistir las invitaciones de tutores en `invitations`, enviarles un correo con código usando el paquete `resend` desde el server de Next.js, y registrar/activar la cuenta del padre en `/activate-account` con ese código creando el vínculo en `parent_children`.
@@ -129,18 +129,18 @@ Convenciones:
 
 ## Criterios de aceptación
 
-- [ ] La migración `create_invitations_parent_children` existe en `supabase/migrations/` y en el historial remoto con los enums `invitation_status` y `relationship_type`, las tablas `invitations` y `parent_children` del diccionario (unique en `code`, unique `(parent_id, child_id)`, índices por FK) y RLS activado en ambas.
-- [ ] Una consulta anónima a `invitations` y `parent_children` devuelve 0 filas; `invitation_by_code` es ejecutable por anon y solo expone los campos de `InvitationInfo`.
-- [ ] "Enviar invitación" válido crea una fila `pending` con `expires_at` ≈ `now() + 7 días` y el parentesco mapeado al enum (`mom`→`mother`, `dad`→`father`), y cancela cualquier `pending` previa del mismo niño+email.
-- [ ] Con `RESEND_API_KEY` configurada, el correo sale desde `onboarding@resend.dev` con el código visible y un botón a `/activate-account?code=…`; sin key configurada el diálogo muestra error inline y la invitación queda `cancelled` (sin códigos huérfanos).
-- [ ] El diálogo se cierra en éxito y la sección "PADRES VINCULADOS" muestra al nuevo tutor con badge PENDIENTE y subtítulo "{Mamá|Papá|Tutor/a} · invitación enviada", persistiendo al recargar `/kids/[id]`.
-- [ ] `/activate-account?code=<código pending>` muestra la tarjeta con el niño y sala reales, el email read-only precargado y el código precargado; con código inexistente, aceptado, cancelado o vencido muestra un mensaje de error claro en lugar de la tarjeta.
-- [ ] Activar con contraseña válida crea el usuario confirmado en Supabase Auth, su perfil en `public.users` (`role='parent'`, `full_name` de la invitación, `daycare_id` del niño), marca la invitación `accepted` con `accepted_at` e inserta el vínculo en `parent_children` con el parentesco correcto.
-- [ ] Tras activar, la sesión queda creada y se redirige a `/`; el padre puede hacer logout y volver a entrar con su email y contraseña.
-- [ ] Activar con código vencido, código de otro email o contraseña corta falla con error inline y no crea usuario ni invitación aceptada (el signup se revierte completo).
-- [ ] El perfil `/kids/[id]` muestra al padre activado con badge ACTIVA y parentesco en español; el badge VINCULAR de la card en `/kids` desaparece cuando el niño tiene tutores vinculados.
-- [ ] El checkbox de autorización de fotos de `/activate-account` no escribe nada en la base de datos.
-- [ ] `npm run lint`, `npx tsc --noEmit` y `npm run build` pasan sin errores.
+- [x] La migración `create_invitations_parent_children` existe en `supabase/migrations/` y en el historial remoto con los enums `invitation_status` y `relationship_type`, las tablas `invitations` y `parent_children` del diccionario (unique en `code`, unique `(parent_id, child_id)`, índices por FK) y RLS activado en ambas.
+- [x] Una consulta anónima a `invitations` y `parent_children` devuelve 0 filas; `invitation_by_code` es ejecutable por anon y solo expone los campos de `InvitationInfo`.
+- [x] "Enviar invitación" válido crea una fila `pending` con `expires_at` ≈ `now() + 7 días` y el parentesco mapeado al enum (`mom`→`mother`, `dad`→`father`), y cancela cualquier `pending` previa del mismo niño+email.
+- [x] Con `RESEND_API_KEY` configurada, el correo sale desde `onboarding@resend.dev` con el código visible y un botón a `/activate-account?code=…`; sin key configurada el diálogo muestra error inline y la invitación queda `cancelled` (sin códigos huérfanos).
+- [x] El diálogo se cierra en éxito y la sección "PADRES VINCULADOS" muestra al nuevo tutor con badge PENDIENTE y subtítulo "{Mamá|Papá|Tutor/a} · invitación enviada", persistiendo al recargar `/kids/[id]`.
+- [x] `/activate-account?code=<código pending>` muestra la tarjeta con el niño y sala reales, el email read-only precargado y el código precargado; con código inexistente, aceptado, cancelado o vencido muestra un mensaje de error claro en lugar de la tarjeta.
+- [x] Activar con contraseña válida crea el usuario confirmado en Supabase Auth, su perfil en `public.users` (`role='parent'`, `full_name` de la invitación, `daycare_id` del niño), marca la invitación `accepted` con `accepted_at` e inserta el vínculo en `parent_children` con el parentesco correcto.
+- [x] Tras activar, la sesión queda creada y se redirige a `/`; el padre puede hacer logout y volver a entrar con su email y contraseña.
+- [x] Activar con código vencido, código de otro email o contraseña corta falla con error inline y no crea usuario ni invitación aceptada (el signup se revierte completo).
+- [x] El perfil `/kids/[id]` muestra al padre activado con badge ACTIVA y parentesco en español; el badge VINCULAR de la card en `/kids` desaparece cuando el niño tiene tutores vinculados.
+- [x] El checkbox de autorización de fotos de `/activate-account` no escribe nada en la base de datos.
+- [x] `npm run lint`, `npx tsc --noEmit` y `npm run build` pasan sin errores.
 
 ## Decisiones
 
@@ -158,6 +158,13 @@ Convenciones:
 - **Sí:** origen del link del correo tomado de `headers()` en la server action — en dev apunta a localhost y en producción al dominio real sin agregar variables de entorno.
 - **No:** librerías de plantillas de email (react-email, etc.) — un builder de HTML en `lib/emails/invitation-email.ts` alcanza y suma cero dependencias.
 - **No:** UI de gestión de invitaciones (listado, reenvío, cancelación manual) y feed/UI por rol del padre — specs separados cuando la vinculación esté estable.
+
+## Decisiones tomadas durante la implementación
+
+- **Sí:** extender `private.handle_new_user()` (no `public.handle_new_user()`), porque el trigger `on_auth_user_created` de `auth.users` apunta a la función del schema `private`. La función `public.handle_new_user()` se creó por error y luego se eliminó.
+- **Sí:** `invitation_by_code` compara `lower(i.code) = lower(p_code)` para soportar códigos escritos o linkeados en mayúsculas/minúsculas.
+- **Sí:** conceder `EXECUTE` a `authenticated` sobre `current_daycare_id()` y `current_user_role()`; es necesario para que las políticas RLS las invoquen. Esto genera warnings esperados de `get_advisors` (funciones `SECURITY DEFINER` ejecutables por usuarios logueados) que se aceptan.
+- **Sí:** se aplicaron migraciones de ajuste para corregir warnings, permisos y bugs encontrados durante la implementación: `fix_invitations_parent_children_advisors`, `fix_security_definer_grants`, `grant_rls_helpers_to_authenticated`, `update_invitation_by_code_add_id`, `fix_invitation_by_code_case_insensitive`, `fix_private_handle_new_user` y `drop_unused_public_handle_new_user`.
 
 ## Riesgos
 

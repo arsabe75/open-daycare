@@ -91,6 +91,10 @@ function mapSignUpError(message: string): string {
     return "Ya existe una cuenta con este email";
   }
 
+  if (lower.includes("database error saving new user")) {
+    return "No se pudo crear la cuenta. Probablemente ya exista un usuario con este email; probá con otro email o iniciá sesión.";
+  }
+
   if (lower.includes("unable to validate email")) {
     return "El email no es válido";
   }

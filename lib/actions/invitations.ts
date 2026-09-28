@@ -164,9 +164,21 @@ export async function createInvitation(
     });
 
     if (sendError) {
-      throw sendError;
+      console.error("Resend send error:", sendError);
+      await supabase
+        .from("invitations")
+        .update({ status: "cancelled" })
+        .eq("id", insertedId);
+
+      const detail =
+        typeof sendError === "object" && sendError !== null && "message" in sendError
+          ? String(sendError.message)
+          : "Error desconocido de Resend";
+
+      return { error: `No se pudo enviar el correo: ${detail}` };
     }
   } catch (err) {
+    console.error("Resend exception:", err);
     await supabase
       .from("invitations")
       .update({ status: "cancelled" })
