@@ -55,6 +55,24 @@ create index invitations_child_id_idx on public.invitations (child_id);
 create index parent_children_parent_id_idx on public.parent_children (parent_id);
 create index parent_children_child_id_idx on public.parent_children (child_id);
 
+-- Helpers reused by RLS (idempotent; may already exist from earlier specs).
+
+create or replace function public.current_daycare_id()
+returns uuid
+language sql stable
+security definer set search_path = public
+as $$
+  select daycare_id from public.users where id = auth.uid();
+$$;
+
+create or replace function public.current_user_role()
+returns public.user_role
+language sql stable
+security definer set search_path = public
+as $$
+  select role from public.users where id = auth.uid();
+$$;
+
 -- Row Level Security
 
 alter table public.invitations enable row level security;
