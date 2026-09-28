@@ -37,10 +37,9 @@ export async function activateAccount(
     return { error: "La contraseña debe tener al menos 6 caracteres" };
   }
 
-  const { data: invitation, error: lookupError } = await supabase.rpc(
-    "invitation_by_code",
-    { p_code: code },
-  );
+  const { data: invitation, error: lookupError } = await supabase
+    .rpc("invitation_by_code", { p_code: code })
+    .single();
 
   if (lookupError || !invitation) {
     return { error: "El código de invitación no es válido" };
