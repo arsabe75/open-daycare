@@ -37,9 +37,11 @@ export async function activateAccount(
     return { error: "La contraseña debe tener al menos 6 caracteres" };
   }
 
-  const { data: invitation, error: lookupError } = await supabase
+  const { data: rawInvitation, error: lookupError } = await supabase
     .rpc("invitation_by_code", { p_code: code })
     .single();
+
+  const invitation = rawInvitation as Record<string, unknown> | null;
 
   if (lookupError || !invitation) {
     return { error: "El código de invitación no es válido" };
@@ -49,11 +51,11 @@ export async function activateAccount(
     return { error: "El código de invitación ya no está vigente" };
   }
 
-  if (new Date(invitation.expires_at) <= new Date()) {
+  if (new Date(String(invitation.expires_at)) <= new Date()) {
     return { error: "El código de invitación expiró" };
   }
 
-  if (invitation.email.toLowerCase() !== email) {
+  if (String(invitation.email).toLowerCase() !== email) {
     return { error: "El email no coincide con la invitación" };
   }
 

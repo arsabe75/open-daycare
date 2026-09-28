@@ -40,9 +40,11 @@ export default async function ActivateAccountPage({
     const cookieStore = await cookies();
     const supabase = createClient(cookieStore);
 
-    const { data, error } = await supabase
+    const { data: rawData, error } = await supabase
       .rpc("invitation_by_code", { p_code: code })
       .single();
+
+    const data = rawData as Record<string, unknown> | null;
 
     if (
       error ||

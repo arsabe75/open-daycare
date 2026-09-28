@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useMemo, useState } from "react";
 import {
   createInvitation,
   type InvitationState,
@@ -36,7 +36,7 @@ export default function LinkParentDialog({
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [relation, setRelation] = useState<ParentRelation>("mom");
-  const [inviteCode, setInviteCode] = useState(() => generateInviteCode());
+  const inviteCode = useMemo(() => generateInviteCode(), []);
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
@@ -53,10 +53,6 @@ export default function LinkParentDialog({
 
   useEffect(() => {
     if (state.ok) {
-      setName("");
-      setEmail("");
-      setRelation("mom");
-      setInviteCode(generateInviteCode());
       onClose();
     }
   }, [state.ok, onClose]);

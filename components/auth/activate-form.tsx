@@ -48,10 +48,21 @@ export default function ActivateForm({
 
   const browserSupabase = createClient();
 
+  function clearInvitation() {
+    setInvitation(null);
+    setLookupError(null);
+  }
+
+  function handleCodeChange(value: string) {
+    const upper = value.toUpperCase();
+    setCode(upper);
+    if (upper.length !== 5) {
+      clearInvitation();
+    }
+  }
+
   useEffect(() => {
     if (code.length !== 5) {
-      setInvitation(null);
-      setLookupError(null);
       return;
     }
 
@@ -60,8 +71,10 @@ export default function ActivateForm({
     browserSupabase
       .rpc("invitation_by_code", { p_code: code })
       .single()
-      .then(({ data, error }) => {
+      .then(({ data: rawData, error }) => {
         if (cancelled) return;
+
+        const data = rawData as Record<string, unknown> | null;
 
         if (error || !data) {
           setInvitation(null);
@@ -163,7 +176,7 @@ export default function ActivateForm({
             name="code"
             type="text"
             value={code}
-            onChange={(e) => setCode(e.target.value.toUpperCase())}
+            onChange={(e) => handleCodeChange(e.target.value)}
             maxLength={5}
             placeholder="ABCDE"
             className="w-full px-4 py-3.5 rounded-[14px] border-[1.5px] border-[#EADFD0] bg-white text-[18px] font-display font-bold tracking-[3px] text-[#3F362E]"

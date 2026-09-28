@@ -147,7 +147,6 @@ export async function createInvitation(
     return { error: "Falta configurar RESEND_API_KEY; la invitación fue cancelada" };
   }
 
-  const childRoomName = child.rooms?.name ?? "";
   const activateUrl = `${origin}/activate-account?code=${encodeURIComponent(finalCode)}`;
 
   try {

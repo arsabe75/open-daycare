@@ -10,6 +10,12 @@ const RELATION_TO_DB: Record<ParentRelation, DbRelationship> = {
   guardian: "guardian",
 };
 
+const DB_TO_RELATION: Record<DbRelationship, ParentRelation> = {
+  mother: "mom",
+  father: "dad",
+  guardian: "guardian",
+};
+
 const DB_TO_LABEL: Record<DbRelationship, string> = {
   mother: "Mamá",
   father: "Papá",
@@ -45,6 +51,10 @@ export function getFirstName(fullName: string): string {
 
 export function toDbRelationship(relation: ParentRelation): DbRelationship {
   return RELATION_TO_DB[relation];
+}
+
+export function fromDbRelationship(relationship: DbRelationship): ParentRelation {
+  return DB_TO_RELATION[relationship];
 }
 
 export function relationLabelFromDb(relationship: DbRelationship): string {
