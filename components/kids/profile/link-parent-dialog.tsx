@@ -1,23 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import {
-  generateInviteCode,
-  getFirstName,
-  isValidEmail,
-} from "@/lib/parent-utils";
-import type { ParentRelation } from "@/lib/data/children";
+  createInvitation,
+  type InvitationState,
+} from "@/lib/actions/invitations";
+import { generateInviteCode, getFirstName } from "@/lib/parent-utils";
+import type { ParentRelation } from "@/lib/child-types";
 
 interface LinkParentDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onLink: (name: string, relation: ParentRelation) => void;
+  childId: string;
   childName: string;
-}
-
-interface FormErrors {
-  name?: string;
-  email?: string;
 }
 
 const RELATIONS: { value: ParentRelation; label: string }[] = [
@@ -29,16 +24,19 @@ const RELATIONS: { value: ParentRelation; label: string }[] = [
 export default function LinkParentDialog({
   isOpen,
   onClose,
-  onLink,
+  childId,
   childName,
 }: LinkParentDialogProps) {
   const firstName = getFirstName(childName);
+  const [state, formAction] = useActionState<InvitationState, FormData>(
+    createInvitation,
+    {},
+  );
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [relation, setRelation] = useState<ParentRelation>("mom");
-  const [inviteCode] = useState(() => generateInviteCode());
-  const [errors, setErrors] = useState<FormErrors>({});
+  const [inviteCode, setInviteCode] = useState(() => generateInviteCode());
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
@@ -53,29 +51,18 @@ export default function LinkParentDialog({
     }
   }, [isOpen, onClose]);
 
+  useEffect(() => {
+    if (state.ok) {
+      setName("");
+      setEmail("");
+      setRelation("mom");
+      setInviteCode(generateInviteCode());
+      onClose();
+    }
+  }, [state.ok, onClose]);
+
   if (!isOpen) {
     return null;
-  }
-
-  function handleSubmit() {
-    const nextErrors: FormErrors = {};
-
-    if (!name.trim()) {
-      nextErrors.name = "El nombre es obligatorio";
-    }
-
-    if (!email.trim()) {
-      nextErrors.email = "El email es obligatorio";
-    } else if (!isValidEmail(email)) {
-      nextErrors.email = "Ingresá un email válido";
-    }
-
-    if (Object.keys(nextErrors).length > 0) {
-      setErrors(nextErrors);
-      return;
-    }
-
-    onLink(name.trim(), relation);
   }
 
   function handleBackdropClick(event: React.MouseEvent<HTMLDivElement>) {
@@ -91,7 +78,14 @@ export default function LinkParentDialog({
       role="dialog"
       aria-modal="true"
     >
-      <div className="w-full max-w-[480px] rounded-[24px] border border-[#ECE0D0] bg-[#FBF4EC] shadow-[0_20px_50px_-24px_rgba(63,54,46,0.35)] overflow-hidden">
+      <form
+        action={formAction}
+        className="w-full max-w-[480px] rounded-[24px] border border-[#ECE0D0] bg-[#FBF4EC] shadow-[0_20px_50px_-24px_rgba(63,54,46,0.35)] overflow-hidden"
+      >
+        <input type="hidden" name="childId" value={childId} />
+        <input type="hidden" name="code" value={inviteCode} />
+        <input type="hidden" name="relation" value={relation} />
+
         <div className="flex items-center justify-between px-6.5 py-5 border-b border-[#ECE0D0]">
           <div>
             <div className="font-display font-semibold text-[18px] text-[#3F362E]">
@@ -147,32 +141,24 @@ export default function LinkParentDialog({
           </div>
           <input
             type="text"
+            name="name"
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Ej. Diego Fernández"
             className="w-full px-4 py-[13px] rounded-[14px] border-[1.5px] border-[#EADFD0] bg-white text-[15px] text-[#3F362E] mb-[18px]"
           />
-          {errors.name && (
-            <div className="text-[13px] text-[#D9583C] mt-[-14px] mb-[14px]">
-              {errors.name}
-            </div>
-          )}
 
           <div className="text-[12px] font-extrabold tracking-[0.7px] text-[#94887B] mb-2">
             EMAIL
           </div>
           <input
             type="email"
+            name="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="correo@ejemplo.com"
             className="w-full px-4 py-[13px] rounded-[14px] border-[1.5px] border-[#EADFD0] bg-white text-[15px] text-[#3F362E] mb-[18px]"
           />
-          {errors.email && (
-            <div className="text-[13px] text-[#D9583C] mt-[-14px] mb-[14px]">
-              {errors.email}
-            </div>
-          )}
 
           <div className="text-[12px] font-extrabold tracking-[0.7px] text-[#94887B] mb-[10px]">
             PARENTESCO
@@ -207,9 +193,14 @@ export default function LinkParentDialog({
             <div className="text-[13px] text-[#A88526] mt-1.5">Vence en 7 días</div>
           </div>
 
+          {state.error && (
+            <div className="text-[13px] text-[#D9583C] mb-[14px]">
+              {state.error}
+            </div>
+          )}
+
           <button
-            type="button"
-            onClick={handleSubmit}
+            type="submit"
             className="flex items-center justify-center gap-[9px] w-full py-[14px] rounded-[14px] bg-gradient-to-b from-[#F4977E] to-[#EE8164] text-white font-extrabold text-[15.5px] shadow-[0_10px_22px_-8px_rgba(238,129,100,0.7)] cursor-pointer"
           >
             <svg
@@ -228,7 +219,7 @@ export default function LinkParentDialog({
             Enviar invitación
           </button>
         </div>
-      </div>
+      </form>
     </div>
   );
 }

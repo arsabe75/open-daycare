@@ -3,7 +3,6 @@
 import { useState } from "react";
 import ChildAvatar from "../child-avatar";
 import LinkParentDialog from "./link-parent-dialog";
-import { buildLinkedParent } from "@/lib/parent-utils";
 import type {
   Child,
   LinkedParent,
@@ -60,14 +59,7 @@ function ParentRow({ parent }: { parent: LinkedParent }) {
 }
 
 export default function LinkedParents({ child }: LinkedParentsProps) {
-  const [linkedParents, setLinkedParents] = useState<LinkedParent[]>(child.linkedParents);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-
-  function handleLink(name: string, relation: ParentRelation) {
-    const newParent = buildLinkedParent(name, relation, linkedParents.length);
-    setLinkedParents((prev) => [...prev, newParent]);
-    setIsDialogOpen(false);
-  }
 
   return (
     <>
@@ -76,8 +68,8 @@ export default function LinkedParents({ child }: LinkedParentsProps) {
           PADRES VINCULADOS
         </div>
         <div className="flex flex-col gap-3.5">
-          {linkedParents.length > 0 ? (
-            linkedParents.map((parent) => (
+          {child.linkedParents.length > 0 ? (
+            child.linkedParents.map((parent) => (
               <ParentRow key={parent.id} parent={parent} />
             ))
           ) : (
@@ -115,7 +107,7 @@ export default function LinkedParents({ child }: LinkedParentsProps) {
         <LinkParentDialog
           isOpen={isDialogOpen}
           onClose={() => setIsDialogOpen(false)}
-          onLink={handleLink}
+          childId={child.id}
           childName={child.name}
         />
       )}
