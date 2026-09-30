@@ -1,4 +1,5 @@
-import { Child, Avatar } from "@/lib/child-types";
+import { Child, Avatar, DbRelationship, LinkedParent } from "@/lib/child-types";
+import { fromDbRelationship } from "@/lib/parent-utils";
 import { translateAllergyTag } from "@/lib/allergies";
 
 const MONTHS = [
@@ -37,6 +38,18 @@ export interface ChildRow {
   created_at: string;
   updated_at: string;
   rooms: { name: string } | null;
+  parent_children: {
+    id: string;
+    relationship: DbRelationship;
+    users: { full_name: string } | null;
+  }[];
+  invitations: {
+    id: string;
+    full_name: string;
+    relationship: DbRelationship;
+    status: "pending" | "accepted" | "expired" | "cancelled";
+    expires_at: string;
+  }[];
 }
 
 export function isValidDate(value: string): boolean {
@@ -114,6 +127,38 @@ export function deriveAvatar(name: string, paletteIndex: number): Avatar {
   return { initial, bg: palette.bg, color: palette.color };
 }
 
+function buildParentAvatar(name: string, id: string): Avatar {
+  const palette = deriveAvatar(name, stableHashIndex(id, AVATAR_PALETTE.length));
+  return { ...palette, color: "#FFFFFF" };
+}
+
+function mapLinkedParents(row: ChildRow): LinkedParent[] {
+  const now = new Date();
+
+  const active: LinkedParent[] = (row.parent_children ?? []).map((pc) => ({
+    id: pc.id,
+    name: pc.users?.full_name ?? "",
+    relation: fromDbRelationship(pc.relationship),
+    status: "active",
+    avatar: buildParentAvatar(pc.users?.full_name ?? "", pc.id),
+  }));
+
+  const pending: LinkedParent[] = (row.invitations ?? [])
+    .filter(
+      (inv) =>
+        inv.status === "pending" && new Date(inv.expires_at) > now,
+    )
+    .map((inv) => ({
+      id: inv.id,
+      name: inv.full_name,
+      relation: fromDbRelationship(inv.relationship),
+      status: "pending",
+      avatar: buildParentAvatar(inv.full_name, inv.id),
+    }));
+
+  return [...active, ...pending];
+}
+
 export function mapChildToViewModel(row: ChildRow): Child {
   const birthDate = parseIsoDate(row.birth_date);
   const enrolledAt = parseIsoDate(row.enrolled_at);
@@ -133,7 +178,7 @@ export function mapChildToViewModel(row: ChildRow): Child {
     birthDate: formatBirthDate(birthDate),
     birthDateIso: `${isoYear}-${isoMonth}-${isoDay}`,
     admission: formatAdmission(enrolledAt),
-    linkedParents: [],
+    linkedParents: mapLinkedParents(row),
     allergyTags: tags,
     medicalNotes: row.medical_notes ?? undefined,
   };

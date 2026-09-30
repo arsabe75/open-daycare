@@ -1,6 +1,19 @@
 export type ParentRelation = "mom" | "dad" | "guardian";
 export type ParentStatus = "active" | "pending";
 
+export type DbRelationship = "father" | "mother" | "guardian";
+
+export interface InvitationInfo {
+  childFullName: string;
+  roomName: string;
+  daycareId: string;
+  fullName: string;
+  email: string;
+  relationship: DbRelationship;
+  status: "pending" | "accepted" | "expired" | "cancelled";
+  expiresAt: string;
+}
+
 export interface Avatar {
   initial: string;
   bg: string;

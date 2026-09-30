@@ -19,7 +19,9 @@ export async function getActiveChildrenWithRoom(): Promise<Child[]> {
 
   const { data, error } = await supabase
     .from("children")
-    .select("*, rooms(name)")
+    .select(
+      "*, rooms(name), parent_children(id, relationship, users(full_name)), invitations(id, full_name, relationship, status, expires_at)",
+    )
     .eq("status", "active")
     .order("full_name", { ascending: true });
 
@@ -36,7 +38,9 @@ export async function getActiveChildById(id: string): Promise<Child | null> {
 
   const { data, error } = await supabase
     .from("children")
-    .select("*, rooms(name)")
+    .select(
+      "*, rooms(name), parent_children(id, relationship, users(full_name)), invitations(id, full_name, relationship, status, expires_at)",
+    )
     .eq("id", id)
     .eq("status", "active")
     .single();
