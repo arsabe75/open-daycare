@@ -93,6 +93,7 @@ Reglas:
 ## Agents
 
 - **spec-verifier** — Verifica, corrige y marca los Acceptance criteria de un spec en `specs/`. Usa Context7 para validar recomendaciones de Next.js y Playwright MCP con visión para comparar pantallas.
+- **react-best-practices** — Aplica las mejores prácticas de React a los archivos indicados, verificando cada recomendación con Context7 y validando con `lint` y `tsc`.
 
 ## Reglas de código
 
