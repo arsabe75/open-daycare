@@ -1,6 +1,6 @@
 ---
 description: Verifica, corrige y marca los Acceptance criteria de un spec en specs/. Usa Context7 para validar recomendaciones de Next.js y Playwright MCP con visión para comparar pantallas.
-mode: all
+mode: subagent
 model: opencode-go/kimi-k2.7-code
 permission:
   read: allow

@@ -1,6 +1,6 @@
 ---
 description: Aplica las mejores prácticas de React a los archivos indicados, verificando con Context7 las recomendaciones actualizadas de la documentación oficial.
-mode: all
+mode: subagent
 model: opencode-go/kimi-k2.7-code
 permission:
   read: allow
