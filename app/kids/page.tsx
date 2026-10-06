@@ -13,7 +13,7 @@ export default async function KidsPage() {
 
   return (
     <div className="flex min-h-screen bg-[#F6ECDF]">
-      <SidebarWithDialog activeHref="/kids" user={user} />
+      <SidebarWithDialog activeHref="/kids" kids={children} rooms={rooms} user={user} />
       <KidsView initialChildren={children} rooms={rooms} />
     </div>
   );

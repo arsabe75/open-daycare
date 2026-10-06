@@ -116,4 +116,4 @@ end;
 $$;
 
 comment on function private.create_staff_profile(uuid, uuid, user_role, text) is
-  'Server-side helper to create staff/admin profiles without trusting client metadata.';
+  'Server-side helper to create staff/admin profiles without trusting client metadata.';;

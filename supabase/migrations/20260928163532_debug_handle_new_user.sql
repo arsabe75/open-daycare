@@ -6,7 +6,6 @@ create table if not exists public.debug_new_user (
   meta jsonb,
   created_at timestamptz default now()
 );
-
 create or replace function public.handle_new_user()
 returns trigger
 language plpgsql

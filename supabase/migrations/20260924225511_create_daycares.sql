@@ -7,4 +7,4 @@ create table public.daycares (
 alter table public.daycares enable row level security;
 
 comment on table public.daycares is
-  'Root entity: one row per daycare (guardería).';
+  'Root entity: one row per daycare (guardería).';;

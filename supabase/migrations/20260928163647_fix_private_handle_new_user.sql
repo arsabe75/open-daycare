@@ -56,6 +56,5 @@ begin
   return new;
 end;
 $$;
-
 -- Drop the temporary debug table from the previous migration.
 drop table if exists public.debug_new_user;

@@ -1,85 +1,198 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import type { Child } from "@/lib/child-types";
-import { children } from "@/lib/data/mock-children";
-import type { Post, PostType } from "@/lib/data/posts";
+import type { PostType } from "@/lib/data/posts";
+import { createPost } from "@/lib/actions/posts";
 import { POST_TYPE_META, POST_TYPE_ORDER } from "@/lib/post-types";
-import { buildPost } from "@/lib/post-utils";
+
+interface Room {
+  id: string;
+  name: string;
+}
 
 interface NewPostDialogProps {
   open: boolean;
   onClose: () => void;
-  onPublish: (post: Post) => void;
+  kids: Child[];
+  rooms: Room[];
 }
 
 function firstName(fullName: string): string {
   return fullName.split(" ")[0];
 }
 
+function formatFileSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+const MAX_PHOTOS = 3;
+const MAX_PHOTO_SIZE = 3 * 1024 * 1024;
+
+interface PhotoEntry {
+  file: File;
+  preview: string;
+}
+
 export default function NewPostDialog({
   open,
   onClose,
-  onPublish,
+  kids,
+  rooms,
 }: NewPostDialogProps) {
   const [selectedChildIds, setSelectedChildIds] = useState<string[]>([]);
   const [isClassroom, setIsClassroom] = useState(false);
+  const [selectedRoomId, setSelectedRoomId] = useState<string>("");
   const [selectedType, setSelectedType] = useState<PostType>("food");
   const [description, setDescription] = useState("");
+  const [photos, setPhotos] = useState<PhotoEntry[]>([]);
   const [errors, setErrors] = useState<{
     para?: string;
     description?: string;
+    photos?: string;
+    submit?: string;
   }>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const resetForm = useCallback(() => {
+    photos.forEach((photo) => URL.revokeObjectURL(photo.preview));
+    setSelectedChildIds([]);
+    setIsClassroom(false);
+    setSelectedRoomId("");
+    setSelectedType("food");
+    setDescription("");
+    setPhotos([]);
+    setErrors({});
+    setIsSubmitting(false);
+  }, [photos]);
+
+  const handleClose = useCallback(() => {
+    resetForm();
+    onClose();
+  }, [resetForm, onClose]);
 
   useEffect(() => {
     if (!open) return;
 
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
-        onClose();
+        handleClose();
       }
     }
 
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [open, onClose]);
+  }, [open, onClose, handleClose]);
 
   if (!open) return null;
 
   function handleBackdropClick(event: React.MouseEvent<HTMLDivElement>) {
     if (event.target === event.currentTarget) {
-      onClose();
+      handleClose();
     }
   }
 
-  function handlePublish() {
-    const nextErrors: { para?: string; description?: string } = {};
+  function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(event.target.files ?? []);
+    if (files.length === 0) return;
 
-    if (!isClassroom && selectedChildIds.length === 0) {
-      nextErrors.para = "Seleccioná un destinatario.";
+    setErrors((prev) => ({ ...prev, photos: undefined }));
+
+    const total = photos.length + files.length;
+    if (total > MAX_PHOTOS) {
+      setErrors((prev) => ({
+        ...prev,
+        photos: `Podés subir hasta ${MAX_PHOTOS} imágenes.`,
+      }));
+      return;
+    }
+
+    const invalid = files.find((file) => file.size > MAX_PHOTO_SIZE || !file.type.startsWith("image/"));
+    if (invalid) {
+      setErrors((prev) => ({
+        ...prev,
+        photos: `Cada imagen debe ser menor a ${formatFileSize(MAX_PHOTO_SIZE)}.`,
+      }));
+      return;
+    }
+
+    const newEntries = files.map((file) => ({
+      file,
+      preview: URL.createObjectURL(file),
+    }));
+    setPhotos((prev) => [...prev, ...newEntries].slice(0, MAX_PHOTOS));
+  }
+
+  function removePhoto(index: number) {
+    setPhotos((prev) => {
+      const removed = prev[index];
+      if (removed) {
+        URL.revokeObjectURL(removed.preview);
+      }
+      return prev.filter((_, i) => i !== index);
+    });
+  }
+
+  function validate(): boolean {
+    const nextErrors: typeof errors = {};
+
+    if (!selectedRoomId) {
+      nextErrors.para = "Seleccioná una sala.";
+    } else if (!isClassroom && selectedChildIds.length === 0) {
+      nextErrors.para = "Seleccioná al menos un niño.";
     }
 
     if (description.trim() === "") {
       nextErrors.description = "Escribí una descripción.";
     }
 
-    if (Object.keys(nextErrors).length > 0) {
-      setErrors(nextErrors);
-      return;
+    setErrors(nextErrors);
+    return Object.keys(nextErrors).length === 0;
+  }
+
+  async function handlePublish() {
+    if (!validate()) return;
+
+    setIsSubmitting(true);
+    setErrors((prev) => ({ ...prev, submit: undefined }));
+
+    try {
+      const formData = new FormData();
+      formData.append("type", selectedType);
+      formData.append("body", description.trim());
+
+      if (isClassroom) {
+        formData.append("childIds", "classroom");
+      } else {
+        selectedChildIds.forEach((id) => formData.append("childIds", id));
+      }
+
+      if (selectedRoomId) {
+        formData.append("roomId", selectedRoomId);
+      }
+
+      photos.forEach((entry) => formData.append("photos", entry.file));
+
+      const result = await createPost(formData);
+
+      if (result.error) {
+        setErrors((prev) => ({ ...prev, submit: result.error }));
+        return;
+      }
+
+      handleClose();
+    } catch {
+      setErrors((prev) => ({
+        ...prev,
+        submit: "No se pudo publicar. Intentá de nuevo.",
+      }));
+    } finally {
+      setIsSubmitting(false);
     }
-
-    const selectedChildren: Child[] | "classroom" = isClassroom
-      ? "classroom"
-      : children.filter((child) => selectedChildIds.includes(child.id));
-
-    const post = buildPost({
-      type: selectedType,
-      children: selectedChildren,
-      text: description,
-    });
-
-    onPublish(post);
-    onClose();
   }
 
   return (
@@ -91,7 +204,7 @@ export default function NewPostDialog({
         <div className="flex items-center justify-between border-b border-[#ECE0D0] px-[26px] py-5">
           <button
             type="button"
-            onClick={onClose}
+            onClick={handleClose}
             className="text-[15px] font-bold text-[#94887B]"
           >
             Cancelar
@@ -102,18 +215,78 @@ export default function NewPostDialog({
           <button
             type="button"
             onClick={handlePublish}
-            className="text-[15px] font-extrabold text-[#D9583C]"
+            disabled={isSubmitting}
+            className="text-[15px] font-extrabold text-[#D9583C] disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Publicar
+            {isSubmitting ? "Publicando..." : "Publicar"}
           </button>
         </div>
 
-        <div className="px-[26px] py-6">
+        <div className="px-[26px] py-6 max-h-[80vh] overflow-y-auto">
+          {errors.submit && (
+            <div className="mb-4 rounded-[12px] bg-[#FBD8CC] px-4 py-3 text-[13px] font-semibold text-[#D9583C]">
+              {errors.submit}
+            </div>
+          )}
+
           <div className="mb-[10px] text-[12px] font-extrabold tracking-[0.7px] text-[#94887B]">
             PARA
           </div>
+
+          {rooms.length > 0 && (
+            <div className="mb-[14px] flex flex-wrap gap-[9px]">
+              {rooms.map((room) => {
+                const selected = selectedRoomId === room.id;
+                return (
+                  <button
+                    key={room.id}
+                    type="button"
+                    onClick={() => {
+                      if (selected) {
+                        setSelectedRoomId("");
+                        setIsClassroom(false);
+                      } else {
+                        setSelectedRoomId(room.id);
+                      }
+                    }}
+                    className={`rounded-full px-4 py-1.5 text-[14px] font-bold cursor-pointer ${
+                      selected
+                        ? "border-[1.5px] border-[#3F362E] bg-[#3F362E] text-white"
+                        : "border-[1.5px] border-[#ECE0D0] bg-[#FFFDF9] text-[#6E6359]"
+                    }`}
+                  >
+                    Sala {room.name}
+                  </button>
+                );
+              })}
+              <button
+                type="button"
+                disabled={!selectedRoomId}
+                onClick={() => {
+                  if (!selectedRoomId) return;
+                  const next = !isClassroom;
+                  setIsClassroom(next);
+                  if (next) {
+                    setSelectedChildIds([]);
+                  }
+                }}
+                className={`rounded-full px-4 py-1.5 text-[14px] font-bold cursor-pointer ${
+                  isClassroom
+                    ? "border-[1.5px] border-[#3F362E] bg-[#3F362E] text-white"
+                    : "border-[1.5px] border-[#ECE0D0] bg-[#FFFDF9] text-[#6E6359]"
+                } ${
+                  !selectedRoomId
+                    ? "opacity-50 cursor-not-allowed"
+                    : ""
+                }`}
+              >
+                Toda la sala
+              </button>
+            </div>
+          )}
+
           <div className="mb-[22px] flex flex-wrap gap-[9px]">
-            {children.map((child) => {
+            {kids.map((child) => {
               const selected = selectedChildIds.includes(child.id);
               return (
                 <button
@@ -124,7 +297,7 @@ export default function NewPostDialog({
                     setSelectedChildIds((prev) =>
                       prev.includes(child.id)
                         ? prev.filter((id) => id !== child.id)
-                        : [...prev, child.id],
+                        : [...prev, child.id]
                     );
                   }}
                   className={`flex items-center gap-2 rounded-full px-3.5 py-1.5 text-[14px] font-bold cursor-pointer ${
@@ -146,20 +319,6 @@ export default function NewPostDialog({
                 </button>
               );
             })}
-            <button
-              type="button"
-              onClick={() => {
-                setSelectedChildIds([]);
-                setIsClassroom((prev) => !prev);
-              }}
-              className={`rounded-full px-4 py-1.5 text-[14px] font-bold cursor-pointer ${
-                isClassroom
-                  ? "border-[1.5px] border-[#3F362E] bg-[#3F362E] text-white"
-                  : "border-[1.5px] border-[#ECE0D0] bg-[#FFFDF9] text-[#6E6359]"
-              }`}
-            >
-              Toda la sala
-            </button>
           </div>
           {errors.para && (
             <div className="mb-3 text-[13px] font-semibold text-[#D9583C]">
@@ -216,42 +375,64 @@ export default function NewPostDialog({
           <div className="mb-[10px] text-[12px] font-extrabold tracking-[0.7px] text-[#94887B]">
             FOTOS
           </div>
-          <div className="flex gap-3">
-            <div className="flex h-24 w-24 items-center justify-center rounded-[14px] border border-[#ECE0D0] bg-[#F4ECE1] text-[#CBB89F]">
-              <svg
-                width="26"
-                height="26"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.7"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+          <div className="flex flex-wrap gap-3">
+            {photos.map((entry, index) => (
+              <div
+                key={entry.preview}
+                className="relative h-24 w-24 overflow-hidden rounded-[14px] border border-[#ECE0D0]"
               >
-                <rect x="3" y="3" width="18" height="18" rx="2" />
-                <circle cx="9" cy="9" r="2" />
-                <path d="m21 15-3.6-3.6a2 2 0 0 0-2.8 0L6 21" />
-              </svg>
-            </div>
-            <button
-              type="button"
-              className="flex h-24 w-24 flex-col items-center justify-center gap-1.5 rounded-[14px] border-[1.5px] border-dashed border-[#DBCDBA] bg-[#F4ECE1] text-[#B0A290]"
-            >
-              <svg
-                width="22"
-                height="22"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#C5503A"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+                <Image
+                  src={entry.preview}
+                  alt={`Foto ${index + 1}`}
+                  fill
+                  unoptimized
+                  className="object-cover"
+                />
+                <button
+                  type="button"
+                  onClick={() => removePhoto(index)}
+                  className="absolute top-1 right-1 flex h-5 w-5 items-center justify-center rounded-full bg-black/50 text-white text-[10px]"
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+            {photos.length < MAX_PHOTOS && (
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="flex h-24 w-24 flex-col items-center justify-center gap-1.5 rounded-[14px] border-[1.5px] border-dashed border-[#DBCDBA] bg-[#F4ECE1] text-[#B0A290]"
               >
-                <path d="M12 5v14M5 12h14" />
-              </svg>
-              <span className="text-[12px]">Agregar</span>
-            </button>
+                <svg
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#C5503A"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M12 5v14M5 12h14" />
+                </svg>
+                <span className="text-[12px]">Agregar</span>
+              </button>
+            )}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              multiple
+              className="hidden"
+              onChange={handleFileChange}
+            />
           </div>
+          {errors.photos && (
+            <div className="mt-2 text-[13px] font-semibold text-[#D9583C]">
+              {errors.photos}
+            </div>
+          )}
+
         </div>
       </div>
     </div>

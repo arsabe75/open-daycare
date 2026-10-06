@@ -53,4 +53,4 @@ revoke execute on function public.current_user_role() from anon;
 -- 3. Remove public/anon execution of the internal event-trigger function.
 --    It is not meant to be called via the REST API; it only makes sense when
 --    fired by the event trigger itself.
-revoke execute on function public.rls_auto_enable() from public, anon, authenticated;
+revoke execute on function public.rls_auto_enable() from public, anon, authenticated;;
