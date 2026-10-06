@@ -2,12 +2,15 @@
 
 import { useActionState } from "react";
 import Link from "next/link";
-import { login } from "@/lib/actions/auth";
+import { login, type LoginState } from "@/lib/actions/auth";
 import AuthField from "./auth-field";
 import AuthSubmit from "./auth-submit";
 
 export default function LoginForm() {
-  const [state, formAction, isPending] = useActionState(login, {});
+  const [state, formAction, isPending] = useActionState<LoginState, FormData>(
+    login,
+    {},
+  );
 
   return (
     <form action={formAction}>
@@ -34,13 +37,17 @@ export default function LoginForm() {
         </Link>
       </div>
 
-      {state.error && (
-        <p className="text-[#C5503A] text-[14px] mb-4 font-semibold">
+      {state?.error && (
+        <p
+          className="text-[#C5503A] text-[14px] mb-4 font-semibold"
+          aria-live="polite"
+          role="status"
+        >
           {state.error}
         </p>
       )}
 
-      <AuthSubmit type="submit">
+      <AuthSubmit type="submit" disabled={isPending}>
         {isPending ? "Iniciando sesión..." : "Iniciar sesión"}
       </AuthSubmit>
 

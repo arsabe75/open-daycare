@@ -2,10 +2,8 @@
 
 create type public.invitation_status as enum ('pending', 'accepted', 'expired', 'cancelled');
 create type public.relationship_type as enum ('father', 'mother', 'guardian');
-
 comment on type public.invitation_status is 'Lifecycle status of a parent invitation.';
 comment on type public.relationship_type is 'Relationship of a guardian to a child.';
-
 -- Table: public.invitations
 
 create table public.invitations (
@@ -21,7 +19,6 @@ create table public.invitations (
   accepted_at  timestamptz,
   created_at   timestamptz not null default now()
 );
-
 comment on table public.invitations is 'Invitations created by staff to link a parent/guardian to a child.';
 comment on column public.invitations.child_id is 'Child the invitee will be linked to.';
 comment on column public.invitations.invited_by is 'Staff member who created the invitation.';
@@ -32,7 +29,6 @@ comment on column public.invitations.code is 'Short unique invitation code.';
 comment on column public.invitations.status is 'Pending until accepted; expired/cancelled are terminal.';
 comment on column public.invitations.expires_at is 'Invitation expiration timestamp (currently 7 days after creation).';
 comment on column public.invitations.accepted_at is 'Timestamp when the invitation was accepted.';
-
 -- Table: public.parent_children
 
 create table public.parent_children (
@@ -43,18 +39,15 @@ create table public.parent_children (
   created_at   timestamptz not null default now(),
   unique (parent_id, child_id)
 );
-
 comment on table public.parent_children is 'Many-to-many link between guardians and children, with relationship type.';
 comment on column public.parent_children.parent_id is 'Linked guardian (public.users, role parent).';
 comment on column public.parent_children.child_id is 'Linked child.';
 comment on column public.parent_children.relationship is 'Relationship of this guardian to the child.';
-
 -- Indexes
 
 create index invitations_child_id_idx on public.invitations (child_id);
 create index parent_children_parent_id_idx on public.parent_children (parent_id);
 create index parent_children_child_id_idx on public.parent_children (child_id);
-
 -- Helpers reused by RLS (idempotent; may already exist from earlier specs).
 
 create or replace function public.current_daycare_id()
@@ -64,7 +57,6 @@ security definer set search_path = public
 as $$
   select daycare_id from public.users where id = auth.uid();
 $$;
-
 create or replace function public.current_user_role()
 returns public.user_role
 language sql stable
@@ -72,12 +64,10 @@ security definer set search_path = public
 as $$
   select role from public.users where id = auth.uid();
 $$;
-
 -- Row Level Security
 
 alter table public.invitations enable row level security;
 alter table public.parent_children enable row level security;
-
 -- Trigger: extend handle_new_user to atomically accept invitations on signup.
 -- The user profile insert is preserved; if an invitation_id is present in
 -- raw_user_meta_data, we validate and accept it in the same transaction.
@@ -136,10 +126,8 @@ begin
   return new;
 end;
 $$;
-
 comment on function public.handle_new_user() is
   'Creates the public.users profile after a new auth.users row is inserted; atomically accepts an invitation when invitation_id is present in metadata.';
-
 -- Function: lookup an invitation by its short code for the activation screen.
 -- Exposed to anon because the activation page is accessed without a session.
 
@@ -173,12 +161,9 @@ as $$
   join public.rooms r on r.id = c.room_id
   where i.code = lower(p_code);
 $$;
-
 comment on function public.invitation_by_code(text) is
   'Returns invitation details by code for the public activation screen.';
-
 grant execute on function public.invitation_by_code(text) to anon, authenticated;
-
 -- RLS policies: invitations
 
 create policy invitations_select_staff on public.invitations
@@ -192,7 +177,6 @@ create policy invitations_select_staff on public.invitations
       where c.id = child_id and r.daycare_id = current_daycare_id()
     )
   );
-
 create policy invitations_insert_staff on public.invitations
   for insert to authenticated
   with check (
@@ -204,7 +188,6 @@ create policy invitations_insert_staff on public.invitations
       where c.id = child_id and r.daycare_id = current_daycare_id()
     )
   );
-
 create policy invitations_cancel_staff on public.invitations
   for update to authenticated
   using (
@@ -218,7 +201,6 @@ create policy invitations_cancel_staff on public.invitations
     )
   )
   with check (status = 'cancelled');
-
 -- RLS policies: parent_children
 
 create policy parent_children_select_staff on public.parent_children
@@ -232,7 +214,6 @@ create policy parent_children_select_staff on public.parent_children
       where c.id = child_id and r.daycare_id = current_daycare_id()
     )
   );
-
 create policy parent_children_select_own on public.parent_children
   for select to authenticated
   using (parent_id = auth.uid());

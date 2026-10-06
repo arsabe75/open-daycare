@@ -1,6 +1,8 @@
-import Link from "next/link";
+import Image from "next/image";
 import type { Post } from "@/lib/data/posts";
 import { POST_TYPE_META } from "@/lib/post-types";
+import PostReactions from "@/components/feed/post-reactions";
+import PostComments from "@/components/feed/post-comments";
 
 interface PostCardProps {
   post: Post;
@@ -11,6 +13,7 @@ export default function PostCard({ post }: PostCardProps) {
   const showMegaphone = !post.childName;
   const initial = post.childName ? post.childName.charAt(0).toUpperCase() : null;
   const title = post.childName ?? (post.type === "announcement" ? "Anuncio general" : "Toda la sala");
+  const hasPhotos = post.photos.length > 0;
 
   return (
     <article className="bg-[#FFFDF9] border border-[#ECE0D0] rounded-[20px] p-5 px-5.5 shadow-[0_4px_16px_-12px_rgba(120,90,60,0.5)]">
@@ -68,70 +71,47 @@ export default function PostCard({ post }: PostCardProps) {
         {post.text}
       </p>
 
-      {post.photoLabel && (
-        <Link
-          href="/foto"
-          className="flex flex-col items-center justify-center gap-2 mt-3.5 border-[1.5px] border-dashed border-[#DBCDBA] rounded-2xl bg-[#F4ECE1] h-50 text-[#B0A290]"
-        >
-          <svg
-            width="30"
-            height="30"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.7"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <rect x="3" y="3" width="18" height="18" rx="2" />
-            <circle cx="9" cy="9" r="2" />
-            <path d="m21 15-3.6-3.6a2 2 0 0 0-2.8 0L6 21" />
-          </svg>
-          <span className="text-[13.5px]">{post.photoLabel}</span>
-        </Link>
+      {hasPhotos && (
+        <div className={`grid gap-2 mt-3.5 ${post.photos.length === 1 ? "grid-cols-1" : "grid-cols-2"}`}>
+          {post.photos.map((photo) => (
+            <div
+              key={photo.id}
+              className={`relative overflow-hidden rounded-2xl border border-[#ECE0D0] bg-[#F4ECE1] ${post.photos.length === 1 ? "h-64" : "h-40"}`}
+            >
+              {photo.signedUrl ? (
+                <Image
+                  src={photo.signedUrl}
+                  alt="Foto de la publicación"
+                  fill
+                  unoptimized
+                  className="object-cover"
+                />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center text-[#B0A290]">
+                  <svg
+                    width="30"
+                    height="30"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.7"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <rect x="3" y="3" width="18" height="18" rx="2" />
+                    <circle cx="9" cy="9" r="2" />
+                    <path d="m21 15-3.6-3.6a2 2 0 0 0-2.8 0L6 21" />
+                  </svg>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       )}
 
-      <div className="flex items-center gap-4.5 mt-4 pt-3.5 border-t border-[#F0E6D8]">
-        <span className="flex items-center gap-1.75 text-[#E0654A] font-bold text-sm">
-          <svg
-            width="19"
-            height="19"
-            viewBox="0 0 24 24"
-            fill="#E0654A"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21.2l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.8z" />
-          </svg>
-          {post.likes}
-        </span>
-        <Link
-          href="/detalle-publicacion"
-          className="flex items-center gap-1.75 text-[#94887B] font-bold text-sm"
-        >
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8z" />
-          </svg>
-          {post.comments}
-        </Link>
-        <span className="flex-1" />
-        <Link
-          href="/crear-publicacion"
-          className="text-[#C5503A] font-extrabold text-sm"
-        >
-          Editar
-        </Link>
+      <div className="flex items-start gap-4.5 mt-4 pt-3.5 border-t border-[#F0E6D8]">
+        <PostReactions postId={post.id} count={post.likes} hasLiked={!!post.userHasLiked} />
+        <PostComments postId={post.id} count={post.comments} comments={post.commentsList} />
       </div>
     </article>
   );

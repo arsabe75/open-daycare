@@ -5,34 +5,34 @@ function firstName(fullName: string): string {
   return fullName.split(" ")[0];
 }
 
-function currentTime(): string {
-  const now = new Date();
-  return `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
-}
-
-function generateId(): string {
-  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
+function formatTime(date: Date): string {
+  return `${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
 }
 
 export function buildPost(input: {
   type: PostType;
   children: Child[] | "classroom";
   text: string;
+  publishedAt?: Date;
 }): Post {
-  const { type, children: selectedChildren, text } = input;
+  const { type, children: selectedChildren, text, publishedAt } = input;
   const isClassroom = selectedChildren === "classroom";
+  const now = publishedAt ?? new Date();
 
   if (isClassroom) {
     return {
-      id: generateId(),
+      id: "",
       type,
       childName: undefined,
       audience: "toda la sala",
-      time: currentTime(),
+      time: formatTime(now),
       authorNote: "publicado por vos",
       text: text.trim(),
+      photos: [],
       likes: 0,
       comments: 0,
+      commentsList: [],
+      publishedAt: now.toISOString(),
     };
   }
 
@@ -44,14 +44,17 @@ export function buildPost(input: {
       : `familias de ${names.join(", ")}`;
 
   return {
-    id: generateId(),
+    id: "",
     type,
     childName,
     audience,
-    time: currentTime(),
+    time: formatTime(now),
     authorNote: "publicado por vos",
     text: text.trim(),
+    photos: [],
     likes: 0,
     comments: 0,
+    commentsList: [],
+    publishedAt: now.toISOString(),
   };
 }

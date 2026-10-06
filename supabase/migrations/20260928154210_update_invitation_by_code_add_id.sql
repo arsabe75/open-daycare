@@ -3,7 +3,6 @@
 
 -- Drop and recreate because adding a column changes the return type.
 drop function if exists public.invitation_by_code(text);
-
 create function public.invitation_by_code(p_code text)
 returns table (
   id              uuid,
@@ -36,5 +35,4 @@ as $$
   join public.rooms r on r.id = c.room_id
   where i.code = lower(p_code);
 $$;
-
 grant execute on function public.invitation_by_code(text) to anon, authenticated;

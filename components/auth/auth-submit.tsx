@@ -1,11 +1,12 @@
 import type { ReactNode } from "react";
-import Link from "next/link";
+import Link, { type LinkProps } from "next/link";
 
 interface AuthSubmitProps {
-  href?: string;
+  href?: LinkProps["href"];
   type?: "submit" | "button";
   children: ReactNode;
   className?: string;
+  disabled?: boolean;
 }
 
 export default function AuthSubmit({
@@ -13,6 +14,7 @@ export default function AuthSubmit({
   type = "button",
   children,
   className = "",
+  disabled,
 }: AuthSubmitProps) {
   const classes = [
     "block w-full text-center py-[15px] rounded-[15px]",
@@ -31,7 +33,7 @@ export default function AuthSubmit({
   }
 
   return (
-    <button type={type} className={classes}>
+    <button type={type} className={classes} disabled={disabled}>
       {children}
     </button>
   );

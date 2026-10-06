@@ -7,5 +7,4 @@
 revoke execute on function public.current_daycare_id() from public, anon, authenticated;
 revoke execute on function public.current_user_role() from public, anon, authenticated;
 revoke execute on function public.handle_new_user() from public, anon, authenticated;
-
 grant execute on function public.invitation_by_code(text) to anon, authenticated;

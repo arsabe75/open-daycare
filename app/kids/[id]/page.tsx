@@ -6,7 +6,7 @@ import AllergyAlert from "@/components/kids/profile/allergy-alert";
 import ChildDetails from "@/components/kids/profile/child-details";
 import LinkedParents from "@/components/kids/profile/linked-parents";
 import ProfileActions from "@/components/kids/profile/profile-actions";
-import { getActiveChildById } from "@/lib/data/children";
+import { getActiveChildById, getActiveChildrenWithRoom } from "@/lib/data/children";
 import { getRooms } from "@/lib/data/rooms";
 import { getCurrentUserProfile } from "@/lib/current-user";
 
@@ -14,9 +14,10 @@ export default async function KidProfilePage({
   params,
 }: PageProps<"/kids/[id]">) {
   const { id } = await params;
-  const [child, rooms, user] = await Promise.all([
+  const [child, rooms, children, user] = await Promise.all([
     getActiveChildById(id),
     getRooms(),
+    getActiveChildrenWithRoom(),
     getCurrentUserProfile(),
   ]);
 
@@ -26,7 +27,7 @@ export default async function KidProfilePage({
 
   return (
     <div className="flex min-h-screen bg-[#F6ECDF]">
-      <SidebarWithDialog activeHref="/kids" user={user} />
+      <SidebarWithDialog activeHref="/kids" kids={children} rooms={rooms} user={user} />
       <main className="flex-1 min-w-0 h-screen overflow-y-auto">
         <div className="max-w-205 w-full mx-auto px-10 pt-8.5 pb-20">
           <Link

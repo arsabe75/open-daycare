@@ -64,25 +64,27 @@ export default function Sidebar({
         </div>
       </Link>
 
-      <button
-        type="button"
-        onClick={onNewPost}
-        className="flex items-center justify-center gap-2 w-full p-3 rounded-[14px] bg-linear-to-b from-[#F4977E] to-[#EE8164] text-white font-extrabold text-[14.5px] shadow-[0_8px_18px_-8px_rgba(238,129,100,0.75)] mb-4.5 cursor-pointer focus:outline-none"
-      >
-        <svg
-          width="17"
-          height="17"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="#fff"
-          strokeWidth="2.4"
-          strokeLinecap="round"
-          strokeLinejoin="round"
+      {onNewPost && (
+        <button
+          type="button"
+          onClick={onNewPost}
+          className="flex items-center justify-center gap-2 w-full p-3 rounded-[14px] bg-linear-to-b from-[#F4977E] to-[#EE8164] text-white font-extrabold text-[14.5px] shadow-[0_8px_18px_-8px_rgba(238,129,100,0.75)] mb-4.5 cursor-pointer focus:outline-none"
         >
-          <path d="M12 5v14M5 12h14" />
-        </svg>
-        Nueva publicación
-      </button>
+          <svg
+            width="17"
+            height="17"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#fff"
+            strokeWidth="2.4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M12 5v14M5 12h14" />
+          </svg>
+          Nueva publicación
+        </button>
+      )}
 
       <nav className="flex flex-col gap-1 flex-1">
         {navItems.map((item) => (
