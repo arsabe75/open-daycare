@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
+import { getCurrentUserProfile } from "@/lib/current-user";
 
 export type LoginState = {
   error?: string;
@@ -28,8 +29,12 @@ export async function login(
     return { error: "Email o contraseña incorrectos" };
   }
 
-  revalidatePath("/", "layout");
-  redirect("/");
+  const profile = await getCurrentUserProfile();
+  const destination =
+    profile?.role === "staff" || profile?.role === "admin" ? "/panel" : "/familia";
+
+  revalidatePath(destination, "layout");
+  redirect(destination);
 }
 
 export async function logout() {

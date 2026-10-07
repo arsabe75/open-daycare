@@ -31,7 +31,7 @@ export default function ProfileActions({ child, rooms }: ProfileActionsProps) {
       return;
     }
 
-    router.push("/kids");
+    router.push("/panel/kids");
   }
 
   return (

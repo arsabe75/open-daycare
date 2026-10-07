@@ -188,7 +188,8 @@ export async function createPost(formData: FormData): Promise<{ error?: string }
     return { error: finalError };
   }
 
-  revalidatePath("/");
+  revalidatePath("/panel");
+  revalidatePath("/familia");
   return {};
 }
 
@@ -244,6 +245,85 @@ function postFromRow(row: PostRow, signedUrls: Record<string, string>, likedPost
     userHasLiked: likedPostIds.has(row.id),
     publishedAt: row.published_at,
   };
+}
+
+export async function getFamilyFeedPosts(): Promise<Post[]> {
+  const cookieStore = await cookies();
+  const supabase = createClient(cookieStore);
+
+  const user = await getCurrentUser(supabase);
+  if (!user) return [];
+
+  // Get the ids of children linked to the current parent.
+  const { data: linkedChildren, error: linksError } = await supabase
+    .from("parent_children")
+    .select("child_id")
+    .eq("parent_id", user.id);
+
+  if (linksError) {
+    console.error("getFamilyFeedPosts links error:", linksError);
+    return [];
+  }
+
+  const linkedChildIds = new Set((linkedChildren ?? []).map((row) => row.child_id as string));
+
+  const [{ data, error }, { data: likedPosts }] = await Promise.all([
+    supabase
+      .from("posts")
+      .select(
+        `
+        id,
+        type,
+        body,
+        published_at,
+        room_id,
+        post_children(child_id, children(full_name)),
+        post_photos(id, url, width, height, position),
+        reactions(count),
+        comments(count),
+        comments_list:comments(id, body, created_at, users(full_name)),
+        users(full_name)
+      `
+      )
+      .order("published_at", { ascending: false }),
+    supabase.from("reactions").select("post_id").eq("user_id", user.id),
+  ]);
+
+  if (error || !data) {
+    console.error("getFamilyFeedPosts error:", error);
+    return [];
+  }
+
+  // Keep general announcements and posts for children linked to the parent.
+  const filteredRows = (data as PostRow[]).filter((row) => {
+    const childIds = (row.post_children ?? []).map((pc) => pc.child_id);
+    if (childIds.length === 0) {
+      return row.type === "announcement";
+    }
+    return childIds.some((childId) => linkedChildIds.has(childId));
+  });
+
+  const paths = new Set<string>();
+  filteredRows.forEach((row) => {
+    (row.post_photos ?? []).forEach((photo) => paths.add(photo.url));
+  });
+
+  let signedUrls: Record<string, string> = {};
+  if (paths.size > 0) {
+    const { data: signedData, error: signedError } = await supabase.storage
+      .from(PHOTO_BUCKET)
+      .createSignedUrls(Array.from(paths), 60 * 60);
+
+    if (!signedError && signedData) {
+      signedUrls = Object.fromEntries(
+        signedData.map((item) => [item.path, item.signedUrl]).filter(([, url]) => url !== undefined)
+      ) as Record<string, string>;
+    }
+  }
+
+  const likedPostIds = new Set((likedPosts ?? []).map((r) => r.post_id as string));
+
+  return filteredRows.map((row) => postFromRow(row, signedUrls, likedPostIds));
 }
 
 export async function getFeedPosts(): Promise<Post[]> {
@@ -320,7 +400,8 @@ export async function addReaction(postId: string): Promise<{ error?: string }> {
     return { error: error.message };
   }
 
-  revalidatePath("/");
+  revalidatePath("/panel");
+  revalidatePath("/familia");
   return {};
 }
 
@@ -341,7 +422,8 @@ export async function removeReaction(postId: string): Promise<{ error?: string }
     return { error: error.message };
   }
 
-  revalidatePath("/");
+  revalidatePath("/panel");
+  revalidatePath("/familia");
   return {};
 }
 
@@ -370,6 +452,7 @@ export async function addComment(
     return { error: error.message };
   }
 
-  revalidatePath("/");
+  revalidatePath("/panel");
+  revalidatePath("/familia");
   return {};
 }
