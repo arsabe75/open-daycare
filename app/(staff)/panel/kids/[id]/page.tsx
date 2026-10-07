@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import SidebarWithDialog from "@/components/sidebar-with-dialog";
 import ChildAvatar from "@/components/kids/child-avatar";
 import AllergyAlert from "@/components/kids/profile/allergy-alert";
@@ -10,9 +10,13 @@ import { getActiveChildById, getActiveChildrenWithRoom } from "@/lib/data/childr
 import { getRooms } from "@/lib/data/rooms";
 import { getCurrentUserProfile } from "@/lib/current-user";
 
-export default async function KidProfilePage({
+interface StaffKidProfilePageProps {
+  params: Promise<{ id: string }>;
+}
+
+export default async function StaffKidProfilePage({
   params,
-}: PageProps<"/kids/[id]">) {
+}: StaffKidProfilePageProps) {
   const { id } = await params;
   const [child, rooms, children, user] = await Promise.all([
     getActiveChildById(id),
@@ -21,17 +25,25 @@ export default async function KidProfilePage({
     getCurrentUserProfile(),
   ]);
 
+  if (!user) {
+    redirect("/login");
+  }
+
+  if (user.role !== "staff" && user.role !== "admin") {
+    redirect("/familia");
+  }
+
   if (!child) {
     notFound();
   }
 
   return (
     <div className="flex min-h-screen bg-[#F6ECDF]">
-      <SidebarWithDialog activeHref="/kids" kids={children} rooms={rooms} user={user} />
+      <SidebarWithDialog activeHref="/panel/kids" kids={children} rooms={rooms} user={user} />
       <main className="flex-1 min-w-0 h-screen overflow-y-auto">
         <div className="max-w-205 w-full mx-auto px-10 pt-8.5 pb-20">
           <Link
-            href="/kids"
+            href="/panel/kids"
             className="flex items-center gap-1.75 text-[#94887B] font-bold text-[14px] mb-5"
           >
             <svg

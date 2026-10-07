@@ -5,15 +5,13 @@ import { logout } from "@/lib/actions/auth";
 import type { CurrentUserProfile } from "@/lib/current-user";
 
 const navItems = [
-  { href: "/panel", label: "Feed" },
-  { href: "/panel/kids", label: "Niños" },
-  { href: "/panel/avisos", label: "Avisos" },
-  { href: "/panel/mi-cuenta", label: "Mi cuenta" },
+  { href: "/familia", label: "Feed" },
+  { href: "/familia/resumen", label: "Resumen del día" },
+  { href: "/familia/cuenta", label: "Mi cuenta" },
 ];
 
-interface SidebarProps {
+interface FamilySidebarProps {
   activeHref?: string;
-  onNewPost?: () => void;
   user?: CurrentUserProfile | null;
 }
 
@@ -22,13 +20,12 @@ function getInitials(name: string | undefined): string {
   return name.trim().charAt(0).toUpperCase();
 }
 
-export default function Sidebar({
-  activeHref = "/panel",
-  onNewPost,
+export default function FamilySidebar({
+  activeHref = "/familia",
   user,
-}: SidebarProps) {
+}: FamilySidebarProps) {
   const isActive = (href: string) =>
-    href === "/panel" ? activeHref === href : activeHref.startsWith(href);
+    href === "/familia" ? activeHref === href : activeHref.startsWith(href);
 
   const displayName = user?.fullName ?? "Invitado";
   const roleLabel = user?.role ?? "";
@@ -38,7 +35,7 @@ export default function Sidebar({
   return (
     <aside className="w-62 flex-none bg-[#FFFDF9] border-r border-[#ECE0D0] flex flex-col p-6 px-4 sticky top-0 h-screen">
       <Link
-        href="/panel"
+        href="/familia"
         className="flex items-center gap-2.75 px-2 pt-1 pb-5.5"
       >
         <div className="w-9.5 h-9.5 rounded-xl flex items-center justify-center flex-none bg-linear-to-br from-[#F8C3A8] to-[#F2937A]">
@@ -63,28 +60,6 @@ export default function Sidebar({
           <div className="text-[11.5px] text-[#A89A8B] mt-0.5">Sala Soles</div>
         </div>
       </Link>
-
-      {onNewPost && (
-        <button
-          type="button"
-          onClick={onNewPost}
-          className="flex items-center justify-center gap-2 w-full p-3 rounded-[14px] bg-linear-to-b from-[#F4977E] to-[#EE8164] text-white font-extrabold text-[14.5px] shadow-[0_8px_18px_-8px_rgba(238,129,100,0.75)] mb-4.5 cursor-pointer focus:outline-none"
-        >
-          <svg
-            width="17"
-            height="17"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#fff"
-            strokeWidth="2.4"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M12 5v14M5 12h14" />
-          </svg>
-          Nueva publicación
-        </button>
-      )}
 
       <nav className="flex flex-col gap-1 flex-1">
         {navItems.map((item) => (
@@ -111,7 +86,7 @@ export default function Sidebar({
                 <path d="M3 9.5 12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" />
               </svg>
             )}
-            {item.label === "Niños" && (
+            {item.label === "Resumen del día" && (
               <svg
                 width="19"
                 height="19"
@@ -122,23 +97,8 @@ export default function Sidebar({
                 strokeLinecap="round"
                 strokeLinejoin="round"
               >
-                <circle cx="9" cy="7" r="3" />
-                <circle cx="17" cy="9" r="2.4" />
-                <path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 20a5 5 0 0 1 5.5-4.9" />
-              </svg>
-            )}
-            {item.label === "Avisos" && (
-              <svg
-                width="19"
-                height="19"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0" />
+                <circle cx="12" cy="12" r="4" />
+                <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
               </svg>
             )}
             {item.label === "Mi cuenta" && (

@@ -188,8 +188,8 @@ export async function createInvitation(
     return { error: `No se pudo enviar el correo: ${message}` };
   }
 
-  revalidatePath(`/kids/${childId}`);
-  revalidatePath("/kids");
+  revalidatePath(`/panel/kids/${childId}`);
+  revalidatePath("/panel/kids");
 
   return { ok: true };
 }

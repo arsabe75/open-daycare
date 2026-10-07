@@ -76,8 +76,8 @@ export async function activateAccount(
     return { error: mapSignUpError(signUpError.message) };
   }
 
-  revalidatePath("/", "layout");
-  redirect("/");
+  revalidatePath("/familia", "layout");
+  redirect("/familia");
 }
 
 function mapSignUpError(message: string): string {

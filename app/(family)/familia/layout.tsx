@@ -1,7 +1,11 @@
 import { redirect } from "next/navigation";
 import { getCurrentUserProfile } from "@/lib/current-user";
 
-export default async function RootPage() {
+export default async function FamilyPortalLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const user = await getCurrentUserProfile();
 
   if (!user) {
@@ -12,5 +16,5 @@ export default async function RootPage() {
     redirect("/panel");
   }
 
-  redirect("/familia");
+  return <>{children}</>;
 }

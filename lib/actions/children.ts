@@ -86,7 +86,7 @@ export async function createChild(
     return { error: error.message };
   }
 
-  revalidatePath("/kids");
+  revalidatePath("/panel/kids");
   return {};
 }
 
@@ -122,8 +122,8 @@ export async function updateChild(
     return { error: error.message };
   }
 
-  revalidatePath("/kids");
-  revalidatePath(`/kids/${id}`);
+  revalidatePath("/panel/kids");
+  revalidatePath(`/panel/kids/${id}`);
   return {};
 }
 
@@ -140,7 +140,7 @@ export async function archiveChild(id: string): Promise<{ error?: string }> {
     return { error: error.message };
   }
 
-  revalidatePath("/kids");
-  revalidatePath(`/kids/${id}`);
+  revalidatePath("/panel/kids");
+  revalidatePath(`/panel/kids/${id}`);
   return {};
 }

@@ -18,7 +18,7 @@ export default function ChildCard({ child }: ChildCardProps) {
 
   return (
     <Link
-      href={`/kids/${child.id}`}
+      href={`/panel/kids/${child.id}`}
       className="flex items-center gap-3.5 min-w-0 bg-[#FFFDF9] border border-[#ECE0D0] rounded-[18px] p-4 shadow-[0_4px_14px_-12px_rgba(120,90,60,0.5)] transition duration-150 hover:border-[#F2A78E] hover:-translate-y-0.5"
     >
       <ChildAvatar avatar={child.avatar} size="card" />
